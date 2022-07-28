@@ -83,26 +83,6 @@ void FileHandler::set_files_to_start()
     }
 }
 
-void FileHandler::read_files_size()
-{
-    if (debug_mode)
-    {
-        log.report_info("Reding files to get their size");
-    }
-    first_file_size = first_file.seekg(0, std::ios::end).tellg();
-    second_file_size = second_file.seekg(0, std::ios::end).tellg();
-    if (debug_mode)
-    {
-        log.report_info("Reading files to get size ended");
-        std::string first_file_info;
-        first_file_info.append(first_file_name).append("=").append(std::to_string(first_file_size));
-        log.report_info(first_file_info.c_str());
-        std::string second_file_info;
-        second_file_info.append(second_file_name).append("=").append(std::to_string(second_file_size));
-        log.report_info(second_file_info.c_str());
-    }
-}
-
 void FileHandler::open_files(std::string &first_file_name, std::string &second_file_name)
 {
     this->first_file_name = first_file_name;
@@ -120,9 +100,46 @@ void FileHandler::open_files(std::string &first_file_name, std::string &second_f
         close_files();
         throw std::fstream::failure::exception();
     }
-    // read_files_size();
-    //  set_files_to_start();
-    //    swap_files();
+    read_files();
+}
+
+void FileHandler::read_files()
+{
+    while (!first_file.eof())
+    {
+        std::string line;
+        std::getline(first_file, line);
+        first_file_data.insert(line);
+    }
+    while (!second_file.eof())
+    {
+        std::string line;
+        std::getline(second_file, line);
+        second_file_data.insert(line);
+    }
+    set_files_to_start();
+}
+
+std::set<std::string> *FileHandler::get_first_file_data()
+{
+    if (first_file_data.size() == 0)
+    {
+        log.report_error("No input data from file", first_file_name);
+        close_files();
+        exit(1);
+    }
+    return &first_file_data;
+}
+
+std::set<std::string> *FileHandler::get_second_file_data()
+{
+    if (second_file_data.size() == 0)
+    {
+        log.report_error("No input data from file", second_file_name);
+        close_files();
+        exit(1);
+    }
+    return &second_file_data;
 }
 
 std::ifstream *FileHandler::get_first_file()
@@ -143,16 +160,6 @@ std::string FileHandler::get_first_file_name()
 std::string FileHandler::get_second_file_name()
 {
     return second_file_name;
-}
-
-unsigned long int FileHandler::get_first_file_size()
-{
-    return this->first_file_size;
-}
-
-unsigned long int FileHandler::get_second_file_size()
-{
-    return this->second_file_size;
 }
 
 void FileHandler::set_debug_mode(bool mode)
