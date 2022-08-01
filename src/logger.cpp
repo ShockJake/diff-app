@@ -1,10 +1,10 @@
-#include "logger.h"
+#include "../include/logger.h"
 #include <time.h>
 #include <iostream>
 
-Logger::Logger(){};
+Logger::Logger(){}
 
-Logger::~Logger(){};
+Logger::~Logger(){}
 
 std::string Logger::get_date()
 {

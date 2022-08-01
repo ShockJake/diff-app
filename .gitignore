@@ -4,4 +4,6 @@
 .vscode/tasks.json
 main.exe.stackdump
 main.exe
-main.exe
+.vscode/configurationCache.log
+.vscode/dryrun.log
+.vscode/targets.log

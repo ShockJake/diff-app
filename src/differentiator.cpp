@@ -1,4 +1,4 @@
-#include "differentiator.h"
+#include "../include/differentiator.h"
 #include <iostream>
 
 Differentiator::Differentiator(std::string &first_file_name, std::string &second_file_name, bool debug_mode)
