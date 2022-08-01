@@ -110,16 +110,23 @@ int main(int argc, const char **argv)
         print_provided_parameters(argc, argv, 3);
     }
 
-    Differentiator diffApp(file1, file2, parameters[DEBUG]);
+    try
+    {
+        Differentiator diffApp(file1, file2, parameters[DEBUG]);
+        if (parameters[BASIC_COMPARING])
+        {
+            diffApp.basic_comparing();
+        }
+        else
+        {
+            diffApp.side_by_side_comparing();
+        }
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 
-    if (parameters[BASIC_COMPARING])
-    {
-        diffApp.basic_comparing();
-    }
-    else
-    {
-        diffApp.side_by_side_comparing();
-    }
     std::cout << "End of program...\n";
 
     return 0;

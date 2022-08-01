@@ -7,3 +7,8 @@ main.exe
 .vscode/configurationCache.log
 .vscode/dryrun.log
 .vscode/targets.log
+build/differentiator.o
+build/fileHandler.o
+build/logger.o
+build/main.o
+target/diffApp.exe
