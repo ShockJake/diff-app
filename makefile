@@ -16,7 +16,7 @@ TARGET = ./target/diffApp.exe
 BUILD_DIR = ./build
 REBUILDABLES = $(BUILDED) $(TARGET)
 
-all: $(TARGET) copy_files
+all: $(TARGET) move_files
 
 # Rule for making executable program 
 $(TARGET): $(OBJS)
@@ -36,7 +36,7 @@ logger.o: ./include/logger.h
 	clean
 	copy_files
 
-copy_files:
+move_files:
 	cp ./*.o ./build
 	cp ./src/*.o ./build
 	rm -f ./*.o
