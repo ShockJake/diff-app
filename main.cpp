@@ -81,9 +81,13 @@ void read_parameters(int argc, const char **argv, bool *parameters)
             perform_fail(strcat(err_msg, argv[i]), argc, argv);
         }
     }
-    if (parameters[BASIC_COMPARING] && parameters[SBS_COMPARING] || !parameters[BASIC_COMPARING] && !parameters[SBS_COMPARING])
+    if ((parameters[BASIC_COMPARING] && parameters[SBS_COMPARING]) || (!parameters[BASIC_COMPARING] && !parameters[SBS_COMPARING]))
     {
-        perform_fail("Both modes are/aren't activated", argc, argv);
+        perform_fail("Both modes are activated", argc, argv);
+    }
+    if (!parameters[BASIC_COMPARING] && !parameters[SBS_COMPARING])
+    {
+        perform_fail("Any mode isn't activated", argc, argv);
     }
 }
 

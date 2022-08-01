@@ -1,15 +1,26 @@
 CC = g++
 CFLAGS = -pedantic -Wall -g -o
 BFLAGS = -g -o
-OBJS = main.o 	 \
+
+OBJS = main.o 	 		   \
 	./src/differentiator.o \
-	./src/fileHandler.o 	 \
+	./src/fileHandler.o    \
 	./src/logger.o
+
+BUILDED = ./build/main.o 	  \
+	 ./build/differentiator.o \
+	 ./build/fileHandler.o 	  \
+	 ./build/logger.o
+
 TARGET = ./target/diffApp.exe
-REBUILDABLES = $(OBJS) $(TARGET)
+BUILD_DIR = ./build
+REBUILDABLES = $(BUILDED) $(TARGET)
 
 all: $(TARGET)
-	echo All done
+	cp ./*.o ./build
+	cp ./src/*.o ./build
+	rm -f ./*.o
+	rm -f ./src/*.o
 
 # Rule for making program executable
 $(TARGET): $(OBJS)
@@ -18,7 +29,6 @@ $(TARGET): $(OBJS)
 # Rule to prepare .o files
 %.o: %.cpp
 	$(CC) $(CFLAGS) $@ -c $<
-	
 
 # Header dependencies
 main.o: ./include/differentiator.h
