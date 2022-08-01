@@ -16,13 +16,9 @@ TARGET = ./target/diffApp.exe
 BUILD_DIR = ./build
 REBUILDABLES = $(BUILDED) $(TARGET)
 
-all: $(TARGET)
-	cp ./*.o ./build
-	cp ./src/*.o ./build
-	rm -f ./*.o
-	rm -f ./src/*.o
+all: $(TARGET) copy_files
 
-# Rule for making program executable
+# Rule for making executable program 
 $(TARGET): $(OBJS)
 	$(CC) $(BFLAGS) $@ $^
 
@@ -38,6 +34,13 @@ logger.o: ./include/logger.h
 
 .Phony:
 	clean
+	copy_files
+
+copy_files:
+	cp ./*.o ./build
+	cp ./src/*.o ./build
+	rm -f ./*.o
+	rm -f ./src/*.o
 
 clean:
 	rm -f $(REBUILDABLES)
