@@ -10,8 +10,8 @@ private:
     bool debug_mode = false;
     Logger log;
 
-    std::set<std::string> *first_file_data;
-    std::set<std::string> *second_file_data;
+    std::set<std::string> *first_file_data = nullptr;
+    std::set<std::string> *second_file_data = nullptr;
 
 public:
     Differentiator(std::string &first_file_name, std::string &second_file_name, bool debug_mode = false);

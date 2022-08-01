@@ -2,9 +2,9 @@
 #include <time.h>
 #include <iostream>
 
-Logger::Logger(){}
+Logger::Logger() {}
 
-Logger::~Logger(){}
+Logger::~Logger() {}
 
 std::string Logger::get_date()
 {
@@ -38,20 +38,20 @@ void Logger::report_info(const char *msg, const char *e)
 
 void Logger::report_error(std::string &msg)
 {
-    std::cout << get_date() << " - ERROR - " << msg << '\n';
+    std::cerr << get_date() << " - ERROR - " << msg << '\n';
 }
 
 void Logger::report_error(std::string &msg, std::string &file_name)
 {
-    std::cout << get_date() << " - ERROR - " << msg << " : " << file_name << '\n';
+    std::cerr << get_date() << " - ERROR - " << msg << " : " << file_name << '\n';
 }
 
 void Logger::report_error(const char *msg, std::string &file_name)
 {
-    std::cout << get_date() << " - ERROR - " << msg << " : " << file_name << '\n';
+    std::cerr << get_date() << " - ERROR - " << msg << " : " << file_name << '\n';
 }
 
 void Logger::report_error(const char *msg, const char *e)
 {
-    std::cout << get_date() << " - ERROR - " << msg << " : " << e << '\n';
+    std::cerr << get_date() << " - ERROR - " << msg << " : " << e << '\n';
 }

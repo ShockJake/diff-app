@@ -18,10 +18,7 @@ Differentiator::Differentiator(std::string &first_file_name, std::string &second
     }
 }
 
-Differentiator::~Differentiator()
-{
-    file_handler.~FileHandler();
-}
+Differentiator::~Differentiator() {}
 
 void Differentiator::print_difference(std::string line, std::string &file_name)
 {
