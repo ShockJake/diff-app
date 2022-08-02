@@ -23,7 +23,7 @@ public:
     void set_files_data();
 
 private:
-    void compare(std::set<std::string> *first_file_data, std::set<std::string> *second_file_data, std::string file_name);
+    void compare(std::set<std::string> *first_file_data, std::set<std::string> *second_file_data, std::string first_file_name, std::string second_file_name);
     void print_difference(std::string line, std::string &file_name);
 };
 

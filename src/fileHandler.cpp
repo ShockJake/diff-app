@@ -2,9 +2,7 @@
 #include <iostream>
 #include <string>
 
-FileHandler::FileHandler()
-{
-}
+FileHandler::FileHandler() {}
 
 FileHandler::FileHandler(std::string &first_file_name, std::string &second_file_name)
 {
@@ -93,12 +91,12 @@ void FileHandler::open_files(std::string &first_file_name, std::string &second_f
 
     if (debug_mode)
     {
-        log.report_info("File verification start");
+        log.report_info("File verification started");
     }
     if (!verify_files())
     {
         close_files();
-        throw std::fstream::failure::exception();
+        throw std::fstream::failure("File verification failed");
     }
     read_files();
 }

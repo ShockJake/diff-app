@@ -127,7 +127,7 @@ int main(int argc, const char **argv)
         std::cerr << e.what() << '\n';
     }
 
-    std::cout << "End of program...\n";
+    std::cout << "\nEnd of program...\n";
 
     return 0;
 }

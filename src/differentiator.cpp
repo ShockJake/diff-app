@@ -7,6 +7,7 @@ Differentiator::Differentiator(std::string &first_file_name, std::string &second
     {
         set_debug_mode(debug_mode);
         file_handler.open_files(first_file_name, second_file_name);
+        set_files_data();
     }
     catch (const std::ifstream::failure &e)
     {
@@ -22,7 +23,7 @@ Differentiator::~Differentiator() {}
 
 void Differentiator::print_difference(std::string line, std::string &file_name)
 {
-    std::cout << "[>>] " << line << " [<<] in file: " << file_name << '\n';
+    std::cout << line << "\t[>>] in file: " << file_name << std::endl;
 }
 
 void Differentiator::set_files_data()
@@ -31,10 +32,11 @@ void Differentiator::set_files_data()
     this->second_file_data = file_handler.get_second_file_data();
 }
 
-void Differentiator::compare(std::set<std::string> *first_file_data, std::set<std::string> *second_file_data, std::string file_name)
+void Differentiator::compare(std::set<std::string> *first_file_data, std::set<std::string> *second_file_data, std::string first_file_name, std::string second_file_name)
 {
     try
     {
+        std::cout << "Comparing files: " << first_file_name << " ->>- " << second_file_name << std::endl;
         std::set<std::string>::iterator i;
         auto begin = first_file_data->begin();
         auto end = first_file_data->end();
@@ -43,7 +45,7 @@ void Differentiator::compare(std::set<std::string> *first_file_data, std::set<st
         {
             if (second_file_data->find(*i) == second_file_data->end())
             {
-                print_difference(*i, file_name);
+                print_difference(std::string(*i), first_file_name);
             }
         }
     }
@@ -55,20 +57,18 @@ void Differentiator::compare(std::set<std::string> *first_file_data, std::set<st
 
 void Differentiator::basic_comparing()
 {
-    set_files_data();
-
-    std::cout << "||| BASIC COMPARING |||\n";
-    compare(first_file_data, second_file_data, file_handler.get_first_file_name());
+    std::cout << "<=> BASIC COMPARING <=>\n";
+    compare(first_file_data, second_file_data, file_handler.get_first_file_name(), file_handler.get_second_file_name());
 }
 
 void Differentiator::side_by_side_comparing()
 {
     std::cout << "\\\\\\ SIDE BY SIDE COMPARING //////\n";
-    std::cout << file_handler.get_first_file_name() << " >> " << file_handler.get_second_file_name() << '\n';
-    basic_comparing();
-    std::cout << "\n\n";
-    std::cout << file_handler.get_second_file_name() << " >> " << file_handler.get_first_file_name() << '\n';
-    compare(second_file_data, first_file_data, file_handler.get_second_file_name());
+    compare(first_file_data, second_file_data, file_handler.get_first_file_name(), file_handler.get_second_file_name());
+    std::string line_separator = "----------------------------------------------";
+    std::cout << '\n'
+              << line_separator << "\n\n";
+    compare(second_file_data, first_file_data, file_handler.get_second_file_name(), file_handler.get_first_file_name());
 }
 
 void Differentiator::set_debug_mode(bool mode)

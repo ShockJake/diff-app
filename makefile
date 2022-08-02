@@ -1,6 +1,6 @@
-CC = g++
-CFLAGS = -pedantic -Wall -g -o
-BFLAGS = -g -o
+CC 		= g++
+CFLAGS 	= -pedantic -Wall -g -o
+BFLAGS 	= -g -o
 
 OBJS = main.o 	 		   \
 	./src/differentiator.o \
@@ -12,9 +12,9 @@ BUILDED = ./build/main.o 	  \
 	 ./build/fileHandler.o 	  \
 	 ./build/logger.o
 
-TARGET = ./target/diffApp.exe
-BUILD_DIR = ./build
-REBUILDABLES = $(BUILDED) $(TARGET)
+TARGET 			= ./target/diffApp.exe
+BUILD_DIR 		= ./build
+REBUILDABLES 	= $(BUILDED) $(TARGET)
 
 all: $(TARGET) move_files
 
@@ -27,18 +27,18 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $@ -c $<
 
 # Header dependencies
-main.o: ./include/differentiator.h
-differentiator.o: ./include/differentiator.h
-fileHandler.o: ./include/fileHandler.h
-logger.o: ./include/logger.h
+main.o: 			./include/differentiator.h
+differentiator.o: 	./include/differentiator.h
+fileHandler.o: 		./include/fileHandler.h
+logger.o: 			./include/logger.h
 
 .Phony:
 	clean
 	copy_files
 
 move_files:
-	cp ./*.o ./build
-	cp ./src/*.o ./build
+	cp ./*.o $(BUILD_DIR)
+	cp ./src/*.o $(BUILD_DIR)
 	rm -f ./*.o
 	rm -f ./src/*.o
 
