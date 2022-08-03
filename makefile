@@ -1,6 +1,6 @@
 CC 		= g++
-CFLAGS 	= -pedantic -Wall -g -o
-BFLAGS 	= -g -o
+CFLAGS 	= -pedantic -Wall -c -o
+LFLAGS 	= -g -o
 
 OBJS = main.o 	 		   \
 	./src/differentiator.o \
@@ -20,11 +20,11 @@ all: $(TARGET) move_files
 
 # Rule for making executable program 
 $(TARGET): $(OBJS)
-	$(CC) $(BFLAGS) $@ $^
+	$(CC) $^ $(LFLAGS) $@
 
 # Rule to prepare .o files
 %.o: %.cpp
-	$(CC) $(CFLAGS) $@ -c $<
+	$(CC) $(CFLAGS) $@ $<
 
 # Header dependencies
 main.o: 			./include/differentiator.h

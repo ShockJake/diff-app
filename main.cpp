@@ -3,13 +3,14 @@
 #include <iostream>
 #include <cstring>
 
-#define PARAMETERS_AMOUNT 3
+#define PARAMETERS_AMOUNT 4
 
 enum States
 {
     BASIC_COMPARING,
     SBS_COMPARING,
-    DEBUG
+    DEBUG,
+    SMART_COMPARING
 };
 
 void print_usage()
@@ -51,13 +52,17 @@ bool check_provided_parameter(const char *parameter, bool *parameters)
     {
         parameters[BASIC_COMPARING] = true;
     }
-    else if (!strcmp(parameter, "-s"))
+    else if (!strcmp(parameter, "-sbs"))
     {
         parameters[SBS_COMPARING] = true;
     }
     else if (!strcmp(parameter, "-D"))
     {
         parameters[DEBUG] = true;
+    }
+    else if (!strcmp(parameter, "-smt"))
+    {
+        parameters[SMART_COMPARING] = true;
     }
     else
     {
@@ -81,11 +86,11 @@ void read_parameters(int argc, const char **argv, bool *parameters)
             perform_fail(strcat(err_msg, argv[i]), argc, argv);
         }
     }
-    if ((parameters[BASIC_COMPARING] && parameters[SBS_COMPARING]) || (!parameters[BASIC_COMPARING] && !parameters[SBS_COMPARING]))
+    if ((parameters[BASIC_COMPARING] && parameters[SBS_COMPARING]))
     {
-        perform_fail("Both modes are activated", argc, argv);
+        perform_fail("More than one mode is activated", argc, argv);
     }
-    if (!parameters[BASIC_COMPARING] && !parameters[SBS_COMPARING])
+    if (!parameters[BASIC_COMPARING] && !parameters[SBS_COMPARING] && !parameters[SMART_COMPARING])
     {
         perform_fail("Any mode isn't activated", argc, argv);
     }
@@ -117,9 +122,13 @@ int main(int argc, const char **argv)
         {
             diffApp.basic_comparing();
         }
-        else
+        else if (parameters[SBS_COMPARING])
         {
             diffApp.side_by_side_comparing();
+        }
+        else if (parameters[SMART_COMPARING])
+        {
+            diffApp.smart_comparing();
         }
     }
     catch (const std::exception &e)
