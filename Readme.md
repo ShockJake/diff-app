@@ -12,6 +12,10 @@ A simple tool that performs comparison of two files in differen ways.
 
 **Side by Side comparing** (two sides comparing) - performing basic comparing in two ways. So you can see how to files can differ.
 
+### Smart comparing
+
+**Smart comparing** - search for similarities and differences of files and displays them.
+
 ## Compilation and Running
 
 ### Compilation
