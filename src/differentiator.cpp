@@ -1,5 +1,6 @@
 #include "../include/differentiator.h"
 #include <iostream>
+#include <utility>
 
 Differentiator::Differentiator(std::string &first_file_name, std::string &second_file_name, bool debug_mode)
 {
@@ -11,11 +12,15 @@ Differentiator::Differentiator(std::string &first_file_name, std::string &second
     }
     catch (const std::ifstream::failure &e)
     {
-        log.report_error("Opening files failure", e.what());
+        if (debug_mode)
+            log.report_error("Opening files failure", e.what());
+        throw std::exception();
     }
     catch (const std::exception &e)
     {
-        log.report_error("Opening files failure", e.what());
+        if (debug_mode)
+            log.report_error("Opening files failure", e.what());
+        throw std::exception();
     }
 }
 
@@ -34,7 +39,7 @@ void Differentiator::print_result(bool result_type, std::string file_name)
     }
     else
     {
-        
+
         begin = differences.begin();
         end = differences.end();
     }
@@ -58,14 +63,13 @@ void Differentiator::print_result(bool result_type)
     }
     else
     {
-        
         begin = differences.begin();
         end = differences.end();
     }
 
     for (i = begin; i != end; i++)
     {
-        std::cout << *i <<  std::endl;
+        std::cout << *i << std::endl;
     }
 }
 
@@ -86,6 +90,29 @@ void Differentiator::print_names_of_comparing_files(std::string first_file_name,
     std::cout << "Comparing files: " << first_file_name << " ->>- " << second_file_name << std::endl;
 }
 
+void Differentiator::write_data(std::string line, std::set<std::string> *file_data)
+{
+
+    std::pair<std::set<std::string>::iterator, bool> result;
+
+    if (file_data->find(line) == file_data->end())
+    {
+        result = differences.insert(line);
+        if (!result.second && debug_mode)
+        {
+            log.report_warn(std::string().append("Insertion failed: ").append(line).c_str());
+        }
+    }
+    else
+    {
+        result = similarities.insert(line);
+        if (!result.second && debug_mode)
+        {
+            log.report_warn(std::string().append("Insertion failed: ").append(line).c_str());
+        }
+    }
+}
+
 void Differentiator::compare(std::set<std::string> *first_file_data, std::set<std::string> *second_file_data)
 {
     try
@@ -94,17 +121,14 @@ void Differentiator::compare(std::set<std::string> *first_file_data, std::set<st
         auto begin = first_file_data->begin();
         auto end = first_file_data->end();
 
+        if (debug_mode)
+            log.report_info("Writing Data started");
         for (i = begin; i != end; i++)
         {
-            if (second_file_data->find(*i) == second_file_data->end())
-            {
-                differences.insert(*i);
-            }
-            else
-            {
-                similarities.insert(*i);
-            }
+            write_data(*i, second_file_data);
         }
+        if (debug_mode)
+            log.report_info("Writing Data finished successfully");
     }
     catch (const std::exception &e)
     {
@@ -143,9 +167,8 @@ void Differentiator::smart_comparing()
     compare(second_file_data, first_file_data);
     std::cout << "Differences:\n";
     print_result(DIFFERENCES);
-    std::cout << "\nSIMILARITIES:\n";
-    print_result(SIMILARITIES, std::string(file_handler.get_first_file_name().append(" & ").append(file_handler.get_second_file_name())));
-    cleanup();
+    std::cout << "\nSimilarities:\n";
+    print_result(SIMILARITIES);
 }
 
 void Differentiator::set_debug_mode(bool mode)
