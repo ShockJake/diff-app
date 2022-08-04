@@ -36,6 +36,26 @@ void Logger::report_info(const char *msg, const char *e)
     std::cout << get_date() << " - INFO - " << msg << " : " << e << '\n';
 }
 
+void Logger::report_warn(const char *msg)
+{
+    std::cout << get_date() << " - WARN - " << msg << '\n';
+}
+
+void Logger::report_warn(const char *msg, std::string &file_name)
+{
+    std::cout << get_date() << " - WARN - " << msg << " : " << file_name << '\n';
+}
+
+void Logger::report_warn(std::string &msg, std::string &file_name)
+{
+    std::cout << get_date() << " - WARN - " << msg << " : " << file_name << '\n';
+}
+
+void Logger::report_warn(const char *msg, const char *e)
+{
+    std::cout << get_date() << " - WARN - " << msg << " : " << e << '\n';
+}
+
 void Logger::report_error(std::string &msg)
 {
     std::cerr << get_date() << " - ERROR - " << msg << '\n';
