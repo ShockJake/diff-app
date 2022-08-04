@@ -39,12 +39,14 @@ bool FileHandler::verify_files()
 {
     if (!first_file.is_open())
     {
-        log.report_error("Cannot open file: ", first_file_name);
+        if (debug_mode)
+            log.report_error("Cannot open file: ", first_file_name);
         return false;
     }
     if (!second_file.is_open())
     {
-        log.report_error("Cannot open file", second_file_name);
+        if (debug_mode)
+            log.report_error("Cannot open file", second_file_name);
         return false;
     }
     if (debug_mode)
@@ -69,16 +71,16 @@ void FileHandler::set_files_to_start()
     }
     catch (const std::ios_base::failure &e)
     {
-        log.report_error("Fail in setting files to start", e.what());
+        if (debug_mode)
+            log.report_error("Fail in setting files to start", e.what());
     }
     catch (const std::exception &e)
     {
-        log.report_error("Fail in setting files to start", e.what());
+        if (debug_mode)
+            log.report_error("Fail in setting files to start", e.what());
     }
     if (debug_mode)
-    {
         log.report_info("Files were set on the start position");
-    }
 }
 
 void FileHandler::open_files(std::string &first_file_name, std::string &second_file_name)

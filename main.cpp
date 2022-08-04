@@ -9,14 +9,17 @@ enum States
 {
     BASIC_COMPARING,
     SBS_COMPARING,
-    DEBUG,
-    SMART_COMPARING
+    SMART_COMPARING,
+    DEBUG
 };
 
 void print_usage()
 {
     printf("Usage:\n");
-    printf("./program file1 file2 -b/-s (for comparing mode) -D (for debug info)\n");
+    printf("./program file1 file2 -b/-sbs/-smt (for comparing mode) -D (for debug info)\n");
+    printf("\t -b   - Basic comparing\n");
+    printf("\t -sbs - Side by side comparing\n");
+    printf("\t -smt - Smart comparing\n");
 }
 
 void print_provided_parameters(int argc, const char **argv, int start_point)
@@ -33,8 +36,6 @@ void perform_fail(std::string error_msg, int argc, const char **argv)
     std::cout << error_msg << '\n';
     print_provided_parameters(argc, argv, 0);
     print_usage();
-
-    fgetc(stdin);
     exit(1);
 }
 
@@ -71,10 +72,28 @@ bool check_provided_parameter(const char *parameter, bool *parameters)
     return true;
 }
 
+bool check_activated_modes(bool parameters[])
+{
+    int active_modes_number = 0;
+    for (int i = 0; i < PARAMETERS_AMOUNT - 1; i++)
+    {
+        if (parameters[i])
+        {
+            active_modes_number++;
+        }
+    }
+
+    if (active_modes_number > 1)
+    {
+        return false;
+    }
+    return true;
+}
+
 void read_parameters(int argc, const char **argv, bool *parameters)
 {
     fill_parameters_with_false(parameters, PARAMETERS_AMOUNT);
-    if (argc == 3)
+    if (argc == 3 || (argc == 4 && !strcmp(argv[3], "-D")))
     {
         parameters[BASIC_COMPARING] = true;
     }
@@ -82,17 +101,13 @@ void read_parameters(int argc, const char **argv, bool *parameters)
     {
         if (!check_provided_parameter(argv[i], parameters))
         {
-            char err_msg[20] = "Unknown parameter :";
+            char err_msg[21] = "Unknown parameter : ";
             perform_fail(strcat(err_msg, argv[i]), argc, argv);
         }
     }
-    if ((parameters[BASIC_COMPARING] && parameters[SBS_COMPARING]))
+    if (!check_activated_modes(parameters))
     {
         perform_fail("More than one mode is activated", argc, argv);
-    }
-    if (!parameters[BASIC_COMPARING] && !parameters[SBS_COMPARING] && !parameters[SMART_COMPARING])
-    {
-        perform_fail("Any mode isn't activated", argc, argv);
     }
 }
 
@@ -110,11 +125,11 @@ int main(int argc, const char **argv)
 
     if (parameters[DEBUG])
     {
-        std::cout << "First file: provided:" << file1 << '\n';
-        std::cout << "Second file: provided:" << file2 << '\n';
+        std::cout << "First file:  " << file1 << '\n';
+        std::cout << "Second file: " << file2 << '\n';
+        std::cout << "Provided parameters: ";
         print_provided_parameters(argc, argv, 3);
     }
-
     try
     {
         Differentiator diffApp(file1, file2, parameters[DEBUG]);
@@ -133,7 +148,7 @@ int main(int argc, const char **argv)
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << '\n';
+        perform_fail("Failed", argc, argv);
     }
 
     std::cout << "\nEnd of program...\n";
