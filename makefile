@@ -12,11 +12,16 @@ BUILDED = ./build/main.o 	  \
 	 ./build/fileHandler.o 	  \
 	 ./build/logger.o
 
-TARGET 			= ./target/diffApp.exe
-BUILD_DIR 		= ./build
+BUILD_DIR 		= ./build/
+TARGET_DIR 		= ./target/
+TARGET 			= $(TARGET_DIR)diffApp.exe
 REBUILDABLES 	= $(BUILDED) $(TARGET)
 
-all: $(TARGET) move_files
+all: compile
+
+install: create_directories compile
+
+compile: $(TARGET) move_files
 
 # Rule for making executable program 
 $(TARGET): $(OBJS)
@@ -35,12 +40,17 @@ logger.o: 			./include/logger.h
 .Phony:
 	clean
 	copy_files
+	create_directories
 
 move_files:
 	cp ./*.o $(BUILD_DIR)
 	cp ./src/*.o $(BUILD_DIR)
 	rm -f ./*.o
 	rm -f ./src/*.o
+
+create_directories:
+	mkdir $(BUILD_DIR)
+	mkdir $(TARGET_DIR)
 
 clean:
 	rm -f $(REBUILDABLES)

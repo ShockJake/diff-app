@@ -23,7 +23,7 @@ A simple tool that performs comparison of two files in differen ways.
 Compiles all source code and links it to the executable file in `target` folder.
 In order to compile just type:
 
-    make
+    make install
 
 *"Clean"* rule also provided:
 
@@ -41,6 +41,8 @@ Parameters:
 
 - *-b* - Basic comparing flag (is set by default)
 
-- *-s* - Side by side comparing flag
+- *-sbs* - Side by side comparing flag
+
+- *-smt* - Smart comparing mode
 
 - *-D* - Debug mode (displays info about program flow)
