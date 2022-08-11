@@ -33,7 +33,7 @@ In order to compile just type:
 
 The Programs runs in different ways.
 
-    ./diffApp file1 file2 -b/-s -D
+    ./diffApp file1 file2 -b/-sbs/-smt -D
 
 Parameters:
 
