@@ -75,8 +75,12 @@ void Differentiator::print_result(bool result_type)
 
 void Differentiator::cleanup()
 {
+    if (debug_mode)
+        log.report_info("Clearing started...");
     similarities.clear();
     differences.clear();
+    if (debug_mode)
+        log.report_info("Clearing finished...");
 }
 
 void Differentiator::set_files_data()
@@ -102,6 +106,8 @@ void Differentiator::write_data(std::string line, std::set<std::string> *file_da
         {
             log.report_warn(std::string().append("Insertion failed: ").append(line).c_str());
         }
+        if (debug_mode)
+            log.report_info("Difference spotted", line);
     }
     else
     {
@@ -110,6 +116,8 @@ void Differentiator::write_data(std::string line, std::set<std::string> *file_da
         {
             log.report_warn(std::string().append("Insertion failed: ").append(line).c_str());
         }
+        if (debug_mode)
+            log.report_info("Similarity spotted", line);
     }
 }
 
@@ -128,7 +136,7 @@ void Differentiator::compare(std::set<std::string> *first_file_data, std::set<st
             write_data(*i, second_file_data);
         }
         if (debug_mode)
-            log.report_info("Writing Data finished successfully");
+            log.report_info("Writing Data finished successfully\n");
     }
     catch (const std::exception &e)
     {
