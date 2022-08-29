@@ -1,4 +1,3 @@
-
 #include "./include/differentiator.h"
 #include <iostream>
 #include <cstring>
@@ -16,7 +15,7 @@ enum States
 void print_usage()
 {
     printf("Usage:\n");
-    printf("./program file1 file2 -b/-sbs/-smt (for comparing mode) -D (for debug info)\n");
+    printf("./diffApp file1 file2 -b/-sbs/-smt (for comparing mode) -D (for debug info)\n");
     printf("\t -b   - Basic comparing\n");
     printf("\t -sbs - Side by side comparing\n");
     printf("\t -smt - Smart comparing\n");

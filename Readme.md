@@ -1,6 +1,6 @@
 # Diff App
 
-A simple tool that performs comparison of two files in differen ways.
+A simple tool that performs comparison of two files in different ways.
 
 ## Functionality
 
@@ -23,7 +23,11 @@ A simple tool that performs comparison of two files in differen ways.
 Compiles all source code and links it to the executable file in `target` folder.
 In order to compile just type:
 
-    make install
+    make all
+
+To install or uninstall it on your machine use:
+
+    sudo make un/install 
 
 *"Clean"* rule also provided:
 

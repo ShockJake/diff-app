@@ -1,5 +1,0 @@
-apple
-pwd
-ls
-jenkins
-ps tree

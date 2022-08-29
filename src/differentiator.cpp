@@ -43,10 +43,10 @@ void Differentiator::print_result(bool result_type, std::string file_name)
         begin = differences.begin();
         end = differences.end();
     }
-
+    std::cout << "Lines only in file: " << file_name << '\n' << std::endl;
     for (i = begin; i != end; i++)
     {
-        std::cout << *i << "\t - in file: " << file_name << std::endl;
+        std::cout << *i << std::endl;
     }
 }
 
@@ -65,6 +65,12 @@ void Differentiator::print_result(bool result_type)
     {
         begin = differences.begin();
         end = differences.end();
+    }
+
+    if (begin == end)
+    {
+        std::cout << "No result..." << std::endl;
+        return;
     }
 
     for (i = begin; i != end; i++)

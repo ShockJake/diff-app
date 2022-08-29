@@ -1,7 +1,0 @@
-apple
-pwd
-ls
-jenkins
-ix
-mvn
-java

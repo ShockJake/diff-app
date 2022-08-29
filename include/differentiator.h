@@ -3,6 +3,7 @@
 
 #include "fileHandler.h"
 #include <set>
+
 class Differentiator
 {
 private:
