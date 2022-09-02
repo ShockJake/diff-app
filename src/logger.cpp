@@ -16,62 +16,92 @@ std::string Logger::get_date()
     return std::string(time);
 }
 
+void Logger::print_info() 
+{
+    std::cout << " \033[0;32m- INFO -\033[0m ";
+}
+
+void Logger::print_warn()
+{
+    std::cout << " \033[1;33m- WARN -\033[0m ";
+}
+
 void Logger::report_info(const char *msg)
 {
-    std::cout << get_date() << " - INFO - " << msg << '\n';
+    std::cout << get_date();
+    print_info();
+    std::cout << msg << '\n';
 }
 
 void Logger::report_info(const char *msg, std::string &file_name)
 {
-    std::cout << get_date() << " - INFO - " << msg << " : " << file_name << '\n';
+    std::cout << get_date();
+    print_info();
+    std::cout << msg << " : " << file_name << '\n';
 }
 
 void Logger::report_info(std::string &msg, std::string &file_name)
 {
-    std::cout << get_date() << " - INFO - " << msg << " : " << file_name << '\n';
+    std::cout << get_date();
+    print_info();
+    std::cout << msg << " : " << file_name << '\n';
 }
 
 void Logger::report_info(const char *msg, const char *e)
 {
-    std::cout << get_date() << " - INFO - " << msg << " : " << e << '\n';
+    std::cout << get_date(); 
+    print_info();
+    std::cout << msg << " : " << e << '\n';
 }
 
 void Logger::report_warn(const char *msg)
 {
-    std::cout << get_date() << " - WARN - " << msg << '\n';
+    std::cout << get_date();
+    print_warn();
+    std::cout << msg << '\n';
 }
 
 void Logger::report_warn(const char *msg, std::string &file_name)
 {
-    std::cout << get_date() << " - WARN - " << msg << " : " << file_name << '\n';
+    std::cout << get_date();
+    print_warn();
+    std::cout << msg << " : " << file_name << '\n';
 }
 
 void Logger::report_warn(std::string &msg, std::string &file_name)
 {
-    std::cout << get_date() << " - WARN - " << msg << " : " << file_name << '\n';
+    std::cout << get_date();
+    print_warn();
+    std::cout << msg << " : " << file_name << '\n';
 }
 
 void Logger::report_warn(const char *msg, const char *e)
 {
-    std::cout << get_date() << " - WARN - " << msg << " : " << e << '\n';
+    std::cout << get_date(); 
+    print_warn();
+    std::cout << msg << " : " << e << '\n';
 }
 
 void Logger::report_error(std::string &msg)
 {
-    std::cerr << get_date() << " - ERROR - " << msg << '\n';
+    std::cerr << "\033[1;31m" << get_date() << " - ERROR - ";
+    std::cerr << msg << "\033[0m\n";
 }
 
 void Logger::report_error(std::string &msg, std::string &file_name)
 {
-    std::cerr << get_date() << " - ERROR - " << msg << " : " << file_name << '\n';
+    std::cerr << "\033[1;31m" << get_date() << " - ERROR - ";
+    std::cerr << msg <<  ':' << file_name << "\033[0m\n";
 }
 
 void Logger::report_error(const char *msg, std::string &file_name)
 {
-    std::cerr << get_date() << " - ERROR - " << msg << " : " << file_name << '\n';
+    std::cerr << "\033[1;31m" << get_date() << " - ERROR - ";
+    std::cerr << msg <<  ':' << file_name << "\033[0m\n";
 }
 
-void Logger::report_error(const char *msg, const char *e)
+void Logger::report_error(const char *msg, const char *exception)
 {
-    std::cerr << get_date() << " - ERROR - " << msg << " : " << e << '\n';
+    std::cerr << "\033[1;31m" << get_date() << " - ERROR - ";
+    std::cerr << msg << ':' << exception << "\033[0m\n";
 }
