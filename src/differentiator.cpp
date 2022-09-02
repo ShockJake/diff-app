@@ -1,4 +1,5 @@
 #include "../include/differentiator.h"
+#include "../include/colorProperties.h"
 #include <iostream>
 #include <utility>
 
@@ -43,7 +44,7 @@ void Differentiator::print_result(bool result_type, std::string file_name)
         begin = differences.begin();
         end = differences.end();
     }
-    std::cout << "Lines only in file: " << file_name << '\n' << std::endl;
+    std::cout << colors.BLUE << "Lines that are only present in - " << file_name << colors.DEFAULT << std::endl;
     for (i = begin; i != end; i++)
     {
         std::cout << *i << std::endl;
@@ -66,10 +67,9 @@ void Differentiator::print_result(bool result_type)
         begin = differences.begin();
         end = differences.end();
     }
-
     if (begin == end)
     {
-        std::cout << "No result..." << std::endl;
+        std::cout << colors.YELLOW << "No result..." << colors.DEFAULT << std::endl;
         return;
     }
 
@@ -97,7 +97,7 @@ void Differentiator::set_files_data()
 
 void Differentiator::print_names_of_comparing_files(std::string first_file_name, std::string second_file_name)
 {
-    std::cout << "Comparing files: " << first_file_name << " ->>- " << second_file_name << std::endl;
+    std::cout << colors.CYAN << "Comparing files: " << first_file_name << " ->>- " << second_file_name << colors.DEFAULT << std::endl;
 }
 
 void Differentiator::write_data(std::string line, std::set<std::string> *file_data)
@@ -152,7 +152,7 @@ void Differentiator::compare(std::set<std::string> *first_file_data, std::set<st
 
 void Differentiator::basic_comparing()
 {
-    std::cout << "<=> BASIC COMPARING <=>\n";
+    std::cout << colors.BLUE << "<=> BASIC COMPARING <=>\n" << colors.DEFAULT;
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
     compare(first_file_data, second_file_data);
     print_result(DIFFERENCES, file_handler.get_first_file_name());
@@ -160,14 +160,14 @@ void Differentiator::basic_comparing()
 
 void Differentiator::side_by_side_comparing()
 {
-    std::cout << "\\\\\\\\\\\\ SIDE BY SIDE COMPARING //////\n";
+    std::cout << colors.PURPLE << "\\\\\\\\\\\\ SIDE BY SIDE COMPARING //////\n" << colors.PURPLE;
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
     compare(first_file_data, second_file_data);
     print_result(DIFFERENCES, file_handler.get_first_file_name());
     cleanup();
     std::string line_separator = "----------------------------------------------";
-    std::cout << '\n'
-              << line_separator << "\n\n";
+    std::cout << "\n" << colors.PURPLE
+              << line_separator << colors.DEFAULT << "\n\n";
     print_names_of_comparing_files(file_handler.get_second_file_name(), file_handler.get_first_file_name());
     compare(second_file_data, first_file_data);
     print_result(DIFFERENCES, file_handler.get_second_file_name());
@@ -175,13 +175,17 @@ void Differentiator::side_by_side_comparing()
 
 void Differentiator::smart_comparing()
 {
-    std::cout << "<<{:}>> SMART COMPARING <<{:}>>\n";
+    std::cout << colors.YELLOW << "<<{:}>> SMART COMPARING <<{:}>>\n" << colors.DEFAULT;
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
     compare(first_file_data, second_file_data);
     compare(second_file_data, first_file_data);
-    std::cout << "Differences:\n";
+    if (differences.size() == 0) {
+        std::cout << colors.BLUE << "Files are identical\n" << colors.DEFAULT;
+        return;
+    }
+    std::cout << colors.YELLOW << "Differences:\n" << colors.DEFAULT;
     print_result(DIFFERENCES);
-    std::cout << "\nSimilarities:\n";
+    std::cout << colors.BLUE << "\nSimilarities:\n" << colors.DEFAULT;
     print_result(SIMILARITIES);
 }
 

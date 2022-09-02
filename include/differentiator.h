@@ -3,6 +3,7 @@
 
 #include "fileHandler.h"
 #include <set>
+#include "colorProperties.h"
 
 class Differentiator
 {
@@ -10,6 +11,7 @@ private:
     FileHandler file_handler;
     bool debug_mode = false;
     Logger log;
+    ColorProperties colors; 
 
     const bool SIMILARITIES = true;
     const bool DIFFERENCES = false;

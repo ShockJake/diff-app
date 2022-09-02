@@ -14,11 +14,11 @@ enum States
 
 void print_usage()
 {
-    printf("Usage:\n");
-    printf("./diffApp file1 file2 -b/-sbs/-smt (for comparing mode) -D (for debug info)\n");
-    printf("\t -b   - Basic comparing\n");
-    printf("\t -sbs - Side by side comparing\n");
-    printf("\t -smt - Smart comparing\n");
+    printf("\033[0;33mUsage:\n");
+    printf("\033[0;32m./diffApp file1 file2 -b/-sbs/-smt (for comparing mode) -D (for debug info)\n");
+    printf("\t-b   - Basic comparing (set by default)\n");
+    printf("\t-sbs - Side by side comparing\n");
+    printf("\t-smt - Smart comparing\033[0m\n");
 }
 
 void print_provided_parameters(int argc, const char **argv, int start_point)
@@ -32,8 +32,10 @@ void print_provided_parameters(int argc, const char **argv, int start_point)
 
 void perform_fail(std::string error_msg, int argc, const char **argv)
 {
-    std::cout << error_msg << '\n';
+    std::cout << "\033[0;31m" << error_msg << "\033[0m\n";
+    std::cout << "Provided arguments: ";
     print_provided_parameters(argc, argv, 0);
+
     print_usage();
     exit(1);
 }
