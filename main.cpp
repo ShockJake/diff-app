@@ -1,4 +1,5 @@
 #include "./include/differentiator.h"
+#include "./include/colorProperties.h"
 #include <iostream>
 #include <cstring>
 
@@ -12,13 +13,14 @@ enum States
     DEBUG
 };
 
-void print_usage()
+void print_usage(ColorProperties &colors)
 {
-    printf("\033[0;33mUsage:\n");
-    printf("\033[0;32m./diffApp file1 file2 -b/-sbs/-smt (for comparing mode) -D (for debug info)\n");
+
+    printf("%sUsage:\n", colors.YELLOW);
+    printf("%sdiffApp file1 file2 -b/-sbs/-smt (for comparing mode) -D (for debug info)\n", colors.GREEN);
     printf("\t-b   - Basic comparing (set by default)\n");
     printf("\t-sbs - Side by side comparing\n");
-    printf("\t-smt - Smart comparing\033[0m\n");
+    printf("\t-smt - Smart comparing%s\n", colors.DEFAULT);
 }
 
 void print_provided_parameters(int argc, const char **argv, int start_point)
@@ -32,11 +34,12 @@ void print_provided_parameters(int argc, const char **argv, int start_point)
 
 void perform_fail(std::string error_msg, int argc, const char **argv)
 {
-    std::cout << "\033[0;31m" << error_msg << "\033[0m\n";
+    ColorProperties colors;
+    std::cout << colors.RED << error_msg << colors.DEFAULT << '\n';
     std::cout << "Provided arguments: ";
     print_provided_parameters(argc, argv, 0);
 
-    print_usage();
+    print_usage(colors);
     exit(1);
 }
 

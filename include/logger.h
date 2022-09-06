@@ -1,13 +1,15 @@
 #ifndef LOGGER_H
 #define LOGGER_H
+
 #include <string>
-#include <string.h>
+#include "colorProperties.h"
 
 class Logger
 {
 private:
     std::string get_date();
-
+    
+    ColorProperties colors;
     void print_info();
     void print_warn();
 

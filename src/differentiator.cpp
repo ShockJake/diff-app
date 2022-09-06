@@ -1,6 +1,7 @@
 #include "../include/differentiator.h"
 #include "../include/colorProperties.h"
 #include <iostream>
+#include <string>
 #include <utility>
 
 Differentiator::Differentiator(std::string &first_file_name, std::string &second_file_name, bool debug_mode)
@@ -26,6 +27,25 @@ Differentiator::Differentiator(std::string &first_file_name, std::string &second
 }
 
 Differentiator::~Differentiator() {}
+
+void Differentiator::print_difference_percentage()
+{
+    int different_lines = differences.size();
+    if (debug_mode) 
+        log.report_info(std::string("Different lines: \t").append(std::to_string(different_lines)).c_str());
+
+    int similar_lines = similarities.size();
+    if (debug_mode) 
+        log.report_info(std::string("Similar lines: \t").append(std::to_string(similar_lines)).c_str());
+
+    int all_lines = different_lines + similar_lines;
+    if (debug_mode)
+        log.report_info(std::string("All lines: \t\t").append(std::to_string(all_lines)).c_str());
+
+    double result = (double) different_lines / (double) all_lines;
+
+    std::cout << colors.GREEN << "Files are " << result * 100 << "%" << " different" << std::endl;
+}
 
 void Differentiator::print_result(bool result_type, std::string file_name)
 {
@@ -183,10 +203,16 @@ void Differentiator::smart_comparing()
         std::cout << colors.BLUE << "Files are identical\n" << colors.DEFAULT;
         return;
     }
+    if (similarities.size() == 0) {
+        std::cout << colors.BLUE << "Files are totally different\n" << colors.DEFAULT;
+        return;
+    }
     std::cout << colors.YELLOW << "Differences:\n" << colors.DEFAULT;
     print_result(DIFFERENCES);
     std::cout << colors.BLUE << "\nSimilarities:\n" << colors.DEFAULT;
     print_result(SIMILARITIES);
+    std::cout << "\n";
+    print_difference_percentage();
 }
 
 void Differentiator::set_debug_mode(bool mode)

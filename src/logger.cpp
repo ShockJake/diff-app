@@ -1,6 +1,7 @@
 #include "../include/logger.h"
 #include <time.h>
 #include <iostream>
+#include <string.h>
 
 Logger::Logger() {}
 
@@ -18,12 +19,12 @@ std::string Logger::get_date()
 
 void Logger::print_info() 
 {
-    std::cout << " \033[0;32m- INFO -\033[0m ";
+    std::cout << colors.GREEN << " - INFO - " << colors.DEFAULT;
 }
 
 void Logger::print_warn()
 {
-    std::cout << " \033[1;33m- WARN -\033[0m ";
+    std::cout << colors.YELLOW << " - WARN - " << colors.DEFAULT;
 }
 
 void Logger::report_info(const char *msg)
@@ -84,24 +85,24 @@ void Logger::report_warn(const char *msg, const char *e)
 
 void Logger::report_error(std::string &msg)
 {
-    std::cerr << "\033[1;31m" << get_date() << " - ERROR - ";
-    std::cerr << msg << "\033[0m\n";
+    std::cerr << colors.RED << get_date() << " - ERROR - ";
+    std::cerr << msg << colors.DEFAULT << '\n';
 }
 
 void Logger::report_error(std::string &msg, std::string &file_name)
 {
-    std::cerr << "\033[1;31m" << get_date() << " - ERROR - ";
-    std::cerr << msg <<  ':' << file_name << "\033[0m\n";
+    std::cerr << colors.RED << get_date() << " - ERROR - ";
+    std::cerr << msg <<  ':' << file_name << colors.DEFAULT << '\n';
 }
 
 void Logger::report_error(const char *msg, std::string &file_name)
 {
-    std::cerr << "\033[1;31m" << get_date() << " - ERROR - ";
-    std::cerr << msg <<  ':' << file_name << "\033[0m\n";
+    std::cerr << colors.RED << get_date() << " - ERROR - ";
+    std::cerr << msg <<  ':' << file_name << colors.DEFAULT << '\n';
 }
 
 void Logger::report_error(const char *msg, const char *exception)
 {
-    std::cerr << "\033[1;31m" << get_date() << " - ERROR - ";
-    std::cerr << msg << ':' << exception << "\033[0m\n";
+    std::cerr << colors.RED << get_date() << " - ERROR - ";
+    std::cerr << msg << ':' << exception << colors.DEFAULT << '\n';
 }

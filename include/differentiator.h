@@ -37,7 +37,8 @@ private:
     void compare(std::set<std::string> *first_file_data, std::set<std::string> *second_file_data);
     void print_result(bool result_type, std::string file_name);
     void write_data(std::string line, std::set<std::string> *file_data);
-    void print_result(bool result_type);
+    void print_result(bool result_type);  
+    void print_difference_percentage(); 
     void cleanup();
 
     std::set<std::string> *get_similarities();

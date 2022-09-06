@@ -11,6 +11,10 @@ BUILDED = ./build/main.o 	  \
 	 ./build/differentiator.o \
 	 ./build/fileHandler.o 	  \
 	 ./build/logger.o		  \
+	 ./build/colorProperties.o 
+
+BLUE_COLOR = "\033[0;34m"
+DEFAULT_COLOR = "\033[0m"
 
 BUILD_DIR 		= ./build/
 TARGET_DIR 		= ./target/
@@ -20,15 +24,15 @@ REBUILDABLES 	= $(BUILDED) $(TARGET)
 all: create_directories compile 
 
 install: copy_to_bin
-	@echo ' - Installed successfully'
+	@echo  $(BLUE_COLOR) ' - Installed successfully' $(DEFAULT_COLOR)
 
 compile: $(TARGET) move_files
 
 # Rule for making executable program 
 $(TARGET): $(OBJS)	
-	@echo ' - Compilation is finished'
+	@echo $(BLUE_COLOR) ' - Compilation is finished' $(DEFAULT_COLOR)
 	$(CC) $^ $(LFLAGS) $@
-	@echo ' - Linking is finished'
+	@echo $(BLUE_COLOR) ' - Linking is finished' $(DEFAULT_COLOR)
 
 # Rule to prepare .o files
 %.o: %.cpp
@@ -52,16 +56,16 @@ move_files:
 	cp ./src/*.o $(BUILD_DIR)
 	rm -f ./*.o
 	rm -f ./src/*.o
-	@echo ' - Builded files are moved to build directory'
+	@echo $(BLUE_COLOR) ' - Builded files are moved to build directory' $(DEFAULT_COLOR)
 
 create_directories:
 	mkdir $(BUILD_DIR)
 	mkdir $(TARGET_DIR)
-	@echo ' - Created directories'
+	@echo $(BLUE_COLOR) ' - Created directories' $(DEFAULT_COLOR)
 
 clean:
 	rm -f $(REBUILDABLES)
-	@echo ' - Clean compleated'
+	@echo $(BLUE_COLOR) ' - Clean compleated' $(DEFAULT_COLOR)
 
 copy_to_bin: 
 	cp $(TARGET) /usr/local/bin/diffApp
