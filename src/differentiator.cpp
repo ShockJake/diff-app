@@ -16,13 +16,13 @@ Differentiator::Differentiator(std::string &first_file_name, std::string &second
     {
         if (debug_mode)
             log.report_error("Opening files failure", e.what());
-        throw std::exception();
+        throw FileOpeningFailure();
     }
     catch (const std::exception &e)
     {
         if (debug_mode)
             log.report_error("Opening files failure", e.what());
-        throw std::exception();
+        throw FileOpeningFailure();
     }
 }
 
@@ -42,9 +42,9 @@ void Differentiator::print_difference_percentage()
     if (debug_mode)
         log.report_info(std::string("All lines: \t\t").append(std::to_string(all_lines)).c_str());
 
-    double result = (double) different_lines / (double) all_lines;
+    double result = (double) different_lines / (double) all_lines * 100;
 
-    std::cout << colors.GREEN << "Files are " << result * 100 << "%" << " different" << std::endl;
+    std::cout << colors.GREEN << "Files are " << result << "%" << " different" << colors.DEFAULT << std::endl;
 }
 
 void Differentiator::print_result(bool result_type, std::string file_name)

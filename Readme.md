@@ -1,6 +1,6 @@
 # Diff App
 
-A simple tool that performs comparison of two files in different ways.
+A simple command line tool that performs comparison of two files in different ways.
 
 ## Functionality
 
@@ -14,7 +14,8 @@ A simple tool that performs comparison of two files in different ways.
 
 ### Smart comparing
 
-**Smart comparing** - search for similarities and differences of files and displays them.
+**Smart comparing** - search for similarities and differences of files and displays them. Can show
+whether files are identical or don't have anything in common.
 
 ## Compilation and Running
 
@@ -25,9 +26,9 @@ In order to compile just type:
 
     make all
 
-To install or uninstall it on your machine use:
+To install it on your machine use:
 
-    sudo make un/install 
+    sudo make install 
 
 *"Clean"* rule also provided:
 
@@ -37,7 +38,7 @@ To install or uninstall it on your machine use:
 
 The Programs runs in different ways.
 
-    ./diffApp file1 file2 -b/-sbs/-smt -D
+    diffApp file1 file2 -b/-sbs/-smt -D
 
 Parameters:
 

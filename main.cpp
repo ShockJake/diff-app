@@ -152,7 +152,7 @@ int main(int argc, const char **argv)
     }
     catch (const std::exception &e)
     {
-        perform_fail("Failed", argc, argv);
+        perform_fail(std::string("Failed: ").append(e.what()), argc, argv);
     }
 
     std::cout << "\nEnd of program...\n";
