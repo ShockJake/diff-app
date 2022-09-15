@@ -12,6 +12,6 @@ build/fileHandler.o
 build/logger.o
 build/main.o
 build/colorProperties.o
-target/diffApp.exe
+target/diffApp
 target/file1.txt
 target/file2.txt

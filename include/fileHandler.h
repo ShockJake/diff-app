@@ -1,6 +1,7 @@
 #ifndef FILEHANDLER_H
 #define FILEHANDLER_H
 #include "logger.h"
+#include "FileTypes.h"
 #include <fstream>
 #include <set>
 class FileHandler
@@ -14,6 +15,7 @@ private:
 
     bool debug_mode = false;
     Logger log;
+    FileTypes types;
 
     std::set<std::string> first_file_data;
     std::set<std::string> second_file_data;
@@ -38,6 +40,8 @@ public:
     std::set<std::string> *get_second_file_data();
 
 private:
+    std::string get_file_type(std::string &file_name);
+    bool check_file_type();
     bool verify_files();
     void read_files();
     void close_files();

@@ -32,16 +32,22 @@ void Differentiator::print_difference_percentage()
 {
     int different_lines = differences.size();
     if (debug_mode) 
-        log.report_info(std::string("Different lines: \t").append(std::to_string(different_lines)).c_str());
-
+    {
+        std::string msg(std::string("Different lines: \t"));
+        log.report_info(msg.append(std::to_string(different_lines)).c_str());
+    }
     int similar_lines = similarities.size();
     if (debug_mode) 
-        log.report_info(std::string("Similar lines: \t").append(std::to_string(similar_lines)).c_str());
-
+    {
+        std::string msg(std::string("Similar lines: \t"));
+        log.report_info(msg.append(std::to_string(similar_lines)).c_str());
+    }
     int all_lines = different_lines + similar_lines;
     if (debug_mode)
-        log.report_info(std::string("All lines: \t\t").append(std::to_string(all_lines)).c_str());
-
+    {
+        std::string msg(std::string("All lines: \t"));
+        log.report_info(msg.append(std::to_string(all_lines)).c_str());
+    }
     double result = (double) different_lines / (double) all_lines * 100;
 
     std::cout << colors.GREEN << "Files are " << result << "%" << " different" << colors.DEFAULT << std::endl;
@@ -170,6 +176,17 @@ void Differentiator::compare(std::set<std::string> *first_file_data, std::set<st
     }
 }
 
+bool Differentiator::check_blank_line() 
+{
+    if (similarities.find(" ") != similarities.end() && similarities.size() == 1) 
+    {
+        if (debug_mode) 
+            log.report_info("Only blank line is common in both files");
+        return true;
+    }
+    return false;
+}
+
 void Differentiator::basic_comparing()
 {
     std::cout << colors.BLUE << "<=> BASIC COMPARING <=>\n" << colors.DEFAULT;
@@ -199,11 +216,11 @@ void Differentiator::smart_comparing()
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
     compare(first_file_data, second_file_data);
     compare(second_file_data, first_file_data);
-    if (differences.size() == 0) {
+    if (differences.empty() || check_blank_line()) {
         std::cout << colors.BLUE << "Files are identical\n" << colors.DEFAULT;
         return;
     }
-    if (similarities.size() == 0) {
+    if (similarities.empty()) {
         std::cout << colors.BLUE << "Files are totally different\n" << colors.DEFAULT;
         return;
     }

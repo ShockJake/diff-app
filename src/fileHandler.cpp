@@ -1,6 +1,8 @@
 #include "../include/fileHandler.h"
 #include <iostream>
-#include <string>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 FileHandler::FileHandler() {}
 
@@ -13,7 +15,7 @@ FileHandler::FileHandler(std::string &first_file_name, std::string &second_file_
     open_files(first_file_name, second_file_name);
     if (debug_mode)
     {
-        log.report_info("Files opened successfuly");
+        log.report_info("Files are opened successfully");
     }
 }
 
@@ -35,6 +37,54 @@ void FileHandler::close_files()
     }
 }
 
+std::string FileHandler::get_file_type(std::string &file_name)
+{
+    fs::file_status s = fs::status(file_name);
+    if(fs::is_regular_file(s)) return types.FILE;
+    if(fs::is_directory(s)) return types.DIRECTORY;
+    if(fs::is_block_file(s)) return types.BLOCK_FILE;
+    if(fs::is_character_file(s)) return types.CHARACTER_DEVICE;
+    if(fs::is_fifo(s)) return types.FIFO;
+    if(fs::is_socket(s)) return types.SOCKET;
+    if(fs::is_symlink(s)) return types.SYMLINK;
+    if(!fs::exists(s)) return types.NONEXISTING;
+    else return types.UNKNOWN;
+}
+
+bool FileHandler::check_file_type()
+{
+    std::string error_msg = "Invalid file type";
+    std::string first_file_type = get_file_type(first_file_name);
+    std::string second_file_type = get_file_type(second_file_name);
+
+    if (first_file_type != types.FILE)
+    {
+        if (debug_mode) 
+        {
+            error_msg = error_msg.append(" of file ")
+                .append(first_file_name)
+                .append(", actual type is: ")
+                .append(first_file_type);
+            log.report_error(error_msg);
+        }
+        return false;
+    }
+    if (!fs::is_regular_file(second_file_name)) 
+    {
+        if (debug_mode)
+        {
+            error_msg = error_msg.append(" of file ")
+                .append(second_file_name)
+                .append(", actual type is: ")
+                .append(second_file_type);
+            log.report_error(error_msg);
+        }
+        return false;
+    }
+
+    return true;
+}
+
 bool FileHandler::verify_files()
 {
     if (!first_file.is_open())
@@ -49,6 +99,11 @@ bool FileHandler::verify_files()
             log.report_error("Cannot open file", second_file_name);
         return false;
     }
+    if (!check_file_type()) 
+    {
+        return false;
+    }
+
     if (debug_mode)
     {
         log.report_info("Files are verified");

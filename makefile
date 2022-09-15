@@ -1,5 +1,5 @@
 CC 		= g++
-CFLAGS 	= -pedantic -Wall -c -o
+CFLAGS 	= -pedantic -Wall -c -std=c++17 -o
 LFLAGS 	= -g -o
 
 OBJS = main.o 	 		   \
@@ -18,7 +18,7 @@ DEFAULT_COLOR = "\033[0m"
 
 BUILD_DIR 		= ./build/
 TARGET_DIR 		= ./target/
-TARGET 			= $(TARGET_DIR)diffApp.exe
+TARGET 			= $(TARGET_DIR)diffApp
 REBUILDABLES 	= $(BUILDED) $(TARGET)
 
 all: create_directories compile 

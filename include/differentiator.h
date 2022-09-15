@@ -49,6 +49,7 @@ private:
     void print_result(bool result_type);  
     void print_difference_percentage(); 
     void cleanup();
+    bool check_blank_line();
 };
 
 #endif // !DIFFERENTIATOR_H
