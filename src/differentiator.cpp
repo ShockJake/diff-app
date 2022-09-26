@@ -16,13 +16,13 @@ Differentiator::Differentiator(std::string &first_file_name, std::string &second
     {
         if (debug_mode)
             log.report_error("Opening files failure", e.what());
-        throw FileOpeningFailure();
+        throw FileHandler::FileOpeningFailure();
     }
     catch (const std::exception &e)
     {
         if (debug_mode)
             log.report_error("Opening files failure", e.what());
-        throw FileOpeningFailure();
+        throw FileHandler::FileOpeningFailure();
     }
 }
 
@@ -31,13 +31,13 @@ Differentiator::~Differentiator() {}
 void Differentiator::print_difference_percentage()
 {
     int different_lines = differences.size();
-    if (debug_mode) 
+    if (debug_mode)
     {
         std::string msg(std::string("Different lines: \t"));
         log.report_info(msg.append(std::to_string(different_lines)).c_str());
     }
     int similar_lines = similarities.size();
-    if (debug_mode) 
+    if (debug_mode)
     {
         std::string msg(std::string("Similar lines: \t"));
         log.report_info(msg.append(std::to_string(similar_lines)).c_str());
@@ -48,9 +48,10 @@ void Differentiator::print_difference_percentage()
         std::string msg(std::string("All lines: \t"));
         log.report_info(msg.append(std::to_string(all_lines)).c_str());
     }
-    double result = (double) different_lines / (double) all_lines * 100;
+    double result = (double)different_lines / (double)all_lines * 100;
 
-    std::cout << colors.GREEN << "Files are " << result << "%" << " different" << colors.DEFAULT << std::endl;
+    std::cout << colors.GREEN << "Files are " << result << "%"
+              << " different" << colors.DEFAULT << std::endl;
 }
 
 void Differentiator::print_result(bool result_type, std::string file_name)
@@ -66,7 +67,6 @@ void Differentiator::print_result(bool result_type, std::string file_name)
     }
     else
     {
-
         begin = differences.begin();
         end = differences.end();
     }
@@ -75,6 +75,19 @@ void Differentiator::print_result(bool result_type, std::string file_name)
     {
         std::cout << *i << std::endl;
     }
+}
+
+bool Differentiator::check_blank_line(std::set<std::string> *file_data)
+{
+    if (file_data->size() == 1)
+    {
+        auto i = file_data->begin();
+        if (std::string("") == *i || std::string("\n") == *i)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 void Differentiator::print_result(bool result_type)
@@ -98,10 +111,12 @@ void Differentiator::print_result(bool result_type)
         std::cout << colors.YELLOW << "No result..." << colors.DEFAULT << std::endl;
         return;
     }
-
     for (i = begin; i != end; i++)
     {
-        std::cout << *i << std::endl;
+        if (std::string("\n") == *i || std::string("") == *i)
+            std::cout << " -- Blank line -- " << std::endl;
+        else
+            std::cout << *i << std::endl;
     }
 }
 
@@ -176,20 +191,10 @@ void Differentiator::compare(std::set<std::string> *first_file_data, std::set<st
     }
 }
 
-bool Differentiator::check_blank_line() 
-{
-    if (similarities.find(" ") != similarities.end() && similarities.size() == 1) 
-    {
-        if (debug_mode) 
-            log.report_info("Only blank line is common in both files");
-        return true;
-    }
-    return false;
-}
-
 void Differentiator::basic_comparing()
 {
-    std::cout << colors.BLUE << "<=> BASIC COMPARING <=>\n" << colors.DEFAULT;
+    std::cout << colors.BLUE << "<=> BASIC COMPARING <=>\n"
+              << colors.DEFAULT;
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
     compare(first_file_data, second_file_data);
     print_result(DIFFERENCES, file_handler.get_first_file_name());
@@ -197,13 +202,15 @@ void Differentiator::basic_comparing()
 
 void Differentiator::side_by_side_comparing()
 {
-    std::cout << colors.PURPLE << "\\\\\\\\\\\\ SIDE BY SIDE COMPARING //////\n" << colors.PURPLE;
+    std::cout << colors.PURPLE << "\\\\\\\\\\\\ SIDE BY SIDE COMPARING //////\n"
+              << colors.PURPLE;
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
     compare(first_file_data, second_file_data);
     print_result(DIFFERENCES, file_handler.get_first_file_name());
     cleanup();
     std::string line_separator = "----------------------------------------------";
-    std::cout << "\n" << colors.PURPLE
+    std::cout << "\n"
+              << colors.PURPLE
               << line_separator << colors.DEFAULT << "\n\n";
     print_names_of_comparing_files(file_handler.get_second_file_name(), file_handler.get_first_file_name());
     compare(second_file_data, first_file_data);
@@ -212,21 +219,28 @@ void Differentiator::side_by_side_comparing()
 
 void Differentiator::smart_comparing()
 {
-    std::cout << colors.YELLOW << "<<{:}>> SMART COMPARING <<{:}>>\n" << colors.DEFAULT;
+    std::cout << colors.YELLOW << "<<{:}>> SMART COMPARING <<{:}>>\n"
+              << colors.DEFAULT;
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
     compare(first_file_data, second_file_data);
     compare(second_file_data, first_file_data);
-    if (differences.empty() || check_blank_line()) {
-        std::cout << colors.BLUE << "Files are identical\n" << colors.DEFAULT;
+    if (differences.empty() || check_blank_line(&differences))
+    {
+        std::cout << colors.BLUE << "Files are identical\n"
+                  << colors.DEFAULT;
         return;
     }
-    if (similarities.empty()) {
-        std::cout << colors.BLUE << "Files are totally different\n" << colors.DEFAULT;
+    if (similarities.empty() || check_blank_line(&similarities))
+    {
+        std::cout << colors.BLUE << "Files are totally different\n"
+                  << colors.DEFAULT;
         return;
     }
-    std::cout << colors.YELLOW << "Differences:\n" << colors.DEFAULT;
+    std::cout << colors.YELLOW << "Differences:\n"
+              << colors.DEFAULT;
     print_result(DIFFERENCES);
-    std::cout << colors.BLUE << "\nSimilarities:\n" << colors.DEFAULT;
+    std::cout << colors.BLUE << "\nSimilarities:\n"
+              << colors.DEFAULT;
     print_result(SIMILARITIES);
     std::cout << "\n";
     print_difference_percentage();

@@ -20,6 +20,22 @@ private:
     std::set<std::string> first_file_data;
     std::set<std::string> second_file_data;
 
+    class FailbitException : public std::ios_base::failure::exception
+    {
+        const char *what() const throw()
+        {
+            return "Delimiting character was not found or no characters were extracted at all";
+        }
+    };
+
+    class BadbitException : public std::ios_base::failure::exception
+    {
+        const char *what() const throw()
+        {
+            return "Error occured on stream";
+        }
+    };
+
 public:
     FileHandler(std::string &first_file_name, std::string &second_file_name);
     FileHandler();
@@ -39,11 +55,21 @@ public:
     std::set<std::string> *get_first_file_data();
     std::set<std::string> *get_second_file_data();
 
+    class FileOpeningFailure : public std::exception
+    {
+        const char *what() const throw()
+        {
+            return "File opening failure";
+        }
+    };
+
 private:
     std::string get_file_type(std::string &file_name);
     bool check_file_type();
+    bool check_file_state(std::ifstream *file);
     bool verify_files();
     void read_files();
+    void read_file(std::ifstream *file, std::set<std::string> *file_data);
     void close_files();
 };
 

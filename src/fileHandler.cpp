@@ -40,45 +40,48 @@ void FileHandler::close_files()
 std::string FileHandler::get_file_type(std::string &file_name)
 {
     fs::file_status s = fs::status(file_name);
-    if(fs::is_regular_file(s)) return types.FILE;
-    if(fs::is_directory(s)) return types.DIRECTORY;
-    if(fs::is_block_file(s)) return types.BLOCK_FILE;
-    if(fs::is_character_file(s)) return types.CHARACTER_DEVICE;
-    if(fs::is_fifo(s)) return types.FIFO;
-    if(fs::is_socket(s)) return types.SOCKET;
-    if(fs::is_symlink(s)) return types.SYMLINK;
-    if(!fs::exists(s)) return types.NONEXISTING;
-    else return types.UNKNOWN;
+    if (fs::is_regular_file(s))
+        return types.FILE;
+    if (fs::is_directory(s))
+        return types.DIRECTORY;
+    if (fs::is_block_file(s))
+        return types.BLOCK_FILE;
+    if (fs::is_character_file(s))
+        return types.CHARACTER_DEVICE;
+    if (fs::is_fifo(s))
+        return types.FIFO;
+    if (fs::is_socket(s))
+        return types.SOCKET;
+    if (fs::is_symlink(s))
+        return types.SYMLINK;
+    if (!fs::exists(s))
+        return types.NONEXISTING;
+    else
+        return types.UNKNOWN;
 }
 
 bool FileHandler::check_file_type()
 {
-    std::string error_msg = "Invalid file type";
+    std::string error_msg = "Invalid file type of file ";
     std::string first_file_type = get_file_type(first_file_name);
     std::string second_file_type = get_file_type(second_file_name);
 
     if (first_file_type != types.FILE)
     {
-        if (debug_mode) 
-        {
-            error_msg = error_msg.append(" of file ")
-                .append(first_file_name)
-                .append(", actual type is: ")
-                .append(first_file_type);
-            log.report_error(error_msg);
-        }
+        if (debug_mode)
+            log.report_error(error_msg
+                                 .append(first_file_name)
+                                 .append(", actual type is: ")
+                                 .append(first_file_type));
         return false;
     }
-    if (!fs::is_regular_file(second_file_name)) 
+    if (second_file_type != types.FILE)
     {
         if (debug_mode)
-        {
-            error_msg = error_msg.append(" of file ")
-                .append(second_file_name)
-                .append(", actual type is: ")
-                .append(second_file_type);
-            log.report_error(error_msg);
-        }
+            log.report_error(error_msg
+                                 .append(second_file_name)
+                                 .append(", actual type is: ")
+                                 .append(second_file_type));
         return false;
     }
 
@@ -90,24 +93,22 @@ bool FileHandler::verify_files()
     if (!first_file.is_open())
     {
         if (debug_mode)
-            log.report_error("Cannot open file: ", first_file_name);
+            log.report_error("Cannot open file", first_file_name);
         return false;
     }
     if (!second_file.is_open())
     {
         if (debug_mode)
-            log.report_error("Cannot open file", second_file_name);
-        return false;
-    }
-    if (!check_file_type()) 
-    {
+            log.report_error("Cannot open file ", second_file_name);
         return false;
     }
 
+    if (!check_file_type())
+        return false;
+
     if (debug_mode)
-    {
         log.report_info("Files are verified");
-    }
+
     return true;
 }
 
@@ -116,13 +117,9 @@ void FileHandler::set_files_to_start()
     try
     {
         if (first_file.tellg() != 0)
-        {
             first_file.seekg(0);
-        }
         if (second_file.tellg() != 0)
-        {
             second_file.seekg(0);
-        }
     }
     catch (const std::ios_base::failure &e)
     {
@@ -147,9 +144,8 @@ void FileHandler::open_files(std::string &first_file_name, std::string &second_f
     this->second_file.open(second_file_name);
 
     if (debug_mode)
-    {
         log.report_info("File verification started");
-    }
+
     if (!verify_files())
     {
         close_files();
@@ -158,21 +154,52 @@ void FileHandler::open_files(std::string &first_file_name, std::string &second_f
     read_files();
 }
 
+bool FileHandler::check_file_state(std::ifstream *file)
+{
+    if (file->good())
+        return true;
+    if (file->eof())
+        return false;
+    if (file->bad())
+        throw BadbitException();
+    if (file->fail())
+        throw FailbitException();
+    return true;
+}
+
+void FileHandler::read_file(std::ifstream *file, std::set<std::string> *file_data)
+{
+    int line_number = 1;
+    std::string parsed_line_number;
+    std::string line;
+    while (check_file_state(file))
+    {
+        std::getline(*file, line);
+        if (line_number < 10)
+            parsed_line_number = std::string("[00").append(std::to_string(line_number));
+        if (line_number < 100)
+            parsed_line_number = std::string("[0").append(std::to_string(line_number));
+        else
+            parsed_line_number = std::string("[").append(std::to_string(line_number));
+
+        file_data->insert(parsed_line_number.append("] ").append(line));
+        line_number++;
+    }
+}
+
 void FileHandler::read_files()
 {
-    while (!first_file.eof())
-    {
-        std::string line;
-        std::getline(first_file, line);
-        first_file_data.insert(line);
-    }
-    while (!second_file.eof())
-    {
-        std::string line;
-        std::getline(second_file, line);
-        second_file_data.insert(line);
-    }
+    if (debug_mode)
+        log.report_info("Files reading started");
+    read_file(&first_file, &first_file_data);
+    if (debug_mode)
+        log.report_info("First file was read successfully");
+    read_file(&second_file, &second_file_data);
+    if (debug_mode)
+        log.report_info("Second file was read successfully");
     set_files_to_start();
+    if (debug_mode)
+        log.report_info("Files reading ended successfully");
 }
 
 std::set<std::string> *FileHandler::get_first_file_data()
@@ -221,7 +248,5 @@ void FileHandler::set_debug_mode(bool mode)
 {
     this->debug_mode = mode;
     if (debug_mode)
-    {
         log.report_info("Debug mode is activated");
-    }
 }

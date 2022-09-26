@@ -19,26 +19,38 @@ whether files are identical or don't have anything in common.
 
 ## Compilation and Running
 
+### Requirements
+
+- GCC for building C\C++ applications *(makefile uses g++ to compile this app, it must support c++17)*
+
 ### Compilation
 
 Compiles all source code and links it to the executable file in `target` folder.
 In order to compile just type:
 
-    make all
+```bash
+make all
+```
 
 To install it on your machine use:
 
-    sudo make install 
+```bash
+sudo make install 
+```
 
 *"Clean"* rule also provided:
 
-    make clean
+```bash
+make clean
+```
 
 ### Running
 
 The Programs runs in different ways.
 
-    diffApp file1 file2 -b/-sbs/-smt -D
+```bash    
+diffApp file1 file2 -b/-sbs/-smt -D
+```
 
 Parameters:
 

@@ -22,14 +22,6 @@ private:
     std::set<std::string> similarities;
     std::set<std::string> differences;
 
-    class FileOpeningFailure : public std::exception 
-    {
-        const char *what() const throw()
-        {
-            return "File opening failure";
-        }
-    };
-
 public:
     Differentiator(std::string &first_file_name, std::string &second_file_name, bool debug_mode = false);
     ~Differentiator();
@@ -49,7 +41,7 @@ private:
     void print_result(bool result_type);  
     void print_difference_percentage(); 
     void cleanup();
-    bool check_blank_line();
+    bool check_blank_line(std::set<std::string> *file_data);
 };
 
 #endif // !DIFFERENTIATOR_H
