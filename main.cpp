@@ -2,23 +2,26 @@
 #include "./include/colorProperties.h"
 #include <iostream>
 
-#define PARAMETERS_AMOUNT 4
+#define PARAMETERS_AMOUNT 5
 
 enum States
 {
     BASIC_COMPARING,
     SBS_COMPARING,
     SMART_COMPARING,
-    DEBUG
+    DEBUG,
+    SHOW_LINE_AND_FILE_NAME
 };
 
 void print_usage(ColorProperties &colors)
 {
     printf("%sUsage:\n", colors.YELLOW);
-    printf("%sdiffApp file1 file2 -b/-sbs/-smt (for comparing mode) -D (for debug info)\n", colors.GREEN);
+    printf("%sdiffApp file1 file2 [-b/-sbs/-smt] [-lf] [-D]\n", colors.GREEN);
     printf("\t-b   - Basic comparing (set by default)\n");
     printf("\t-sbs - Side by side comparing\n");
-    printf("\t-smt - Smart comparing%s\n", colors.DEFAULT);
+    printf("\t-smt - Smart comparing\n");
+    printf("\t-D   - Debug (verbose) mode\n");
+    printf("\t-lf  - Show line number and file name%s\n", colors.DEFAULT);
 }
 
 void print_provided_parameters(int argc, const char **argv, int start_point)
@@ -54,6 +57,8 @@ bool check_provided_parameter(const char *parameter, bool *parameters)
         parameters[DEBUG] = true;
     else if (std::string(parameter) == "-smt")
         parameters[SMART_COMPARING] = true;
+    else if (std::string(parameter) == "-lf")
+        parameters[SHOW_LINE_AND_FILE_NAME] = true;
     else
         return false;
 
@@ -63,7 +68,7 @@ bool check_provided_parameter(const char *parameter, bool *parameters)
 bool check_activated_modes(bool parameters[])
 {
     int active_modes_number = 0;
-    for (int i = 0; i < PARAMETERS_AMOUNT - 1; i++)
+    for (int i = 0; i < PARAMETERS_AMOUNT - 2; i++)
     {
         if (parameters[i])
             active_modes_number++;
@@ -78,7 +83,9 @@ bool check_basic_comparing(int argc, const char **argv)
 {
     if (argc == 3)
         return true;
-    if (argc == 4 && std::string(argv[3]) == "-D")
+    if (argc == 4 && (std::string(argv[3]) == "-D" || std::string(argv[3]) == "-lf"))
+        return true;
+    if (argc == 5 && ((std::string(argv[3]) == "-D" && std::string(argv[4]) == "-lf") || (std::string(argv[3]) == "-lf" && std::string(argv[4]) == "-D")))
         return true;
     return false;
 }
@@ -121,7 +128,7 @@ int main(int argc, const char **argv)
             std::cout << "Provided parameters: ";
             print_provided_parameters(argc, argv, 3);
         }
-        Differentiator diffApp(file1, file2, parameters[DEBUG]);
+        Differentiator diffApp(file1, file2, parameters[DEBUG], parameters[SHOW_LINE_AND_FILE_NAME]);
         if (parameters[BASIC_COMPARING])
             diffApp.basic_comparing();
         else if (parameters[SBS_COMPARING])

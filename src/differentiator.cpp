@@ -1,14 +1,16 @@
 #include "../include/differentiator.h"
 #include "../include/colorProperties.h"
 #include <iostream>
+#include <algorithm>
 #include <string>
 #include <utility>
 
-Differentiator::Differentiator(std::string &first_file_name, std::string &second_file_name, bool debug_mode)
+Differentiator::Differentiator(std::string &first_file_name, std::string &second_file_name, bool debug_mode, bool print_lines)
 {
     try
     {
         set_debug_mode(debug_mode);
+        set_print_lines(print_lines);
         file_handler.open_files(first_file_name, second_file_name);
         set_files_data();
     }
@@ -57,9 +59,9 @@ void Differentiator::print_difference_percentage()
 
 void Differentiator::print_result(bool result_type, std::string file_name)
 {
-    std::set<std::string>::iterator i;
-    std::set<std::string>::iterator begin;
-    std::set<std::string>::iterator end;
+    std::list<std::string>::iterator i;
+    std::list<std::string>::iterator begin;
+    std::list<std::string>::iterator end;
 
     if (result_type)
     {
@@ -78,7 +80,7 @@ void Differentiator::print_result(bool result_type, std::string file_name)
     }
 }
 
-bool Differentiator::check_blank_line(std::set<std::string> *file_data)
+bool Differentiator::check_blank_line(std::list<std::string> *file_data)
 {
     if (file_data->size() == 1)
     {
@@ -93,9 +95,9 @@ bool Differentiator::check_blank_line(std::set<std::string> *file_data)
 
 void Differentiator::print_result(bool result_type)
 {
-    std::set<std::string>::iterator i;
-    std::set<std::string>::iterator begin;
-    std::set<std::string>::iterator end;
+    std::list<std::string>::iterator i;
+    std::list<std::string>::iterator begin;
+    std::list<std::string>::iterator end;
 
     if (result_type)
     {
@@ -142,38 +144,34 @@ void Differentiator::print_names_of_comparing_files(std::string first_file_name,
     std::cout << colors.CYAN << "Comparing files: " << first_file_name << " ->>- " << second_file_name << colors.DEFAULT << std::endl;
 }
 
-void Differentiator::write_data(std::string line, std::set<std::string> *file_data)
+void Differentiator::write_data(std::string line, std::list<std::string> *file_data, std::string &file_name)
 {
-
-    std::pair<std::set<std::string>::iterator, bool> result;
-
-    if (file_data->find(line) == file_data->end())
+    std::list<std::string>::iterator result;
+    if (std::find(file_data->begin(), file_data->end(), line) == file_data->end())
     {
-        result = differences.insert(line);
-        if (!result.second && debug_mode)
-        {
-            log.report_warn(std::string().append("Insertion failed: ").append(line).c_str());
-        }
+        if (print_lines)
+            line = std::string("[").append(file_name).append("] ").append(line);
+
+        result = differences.insert(differences.end(), line);
         if (debug_mode)
             log.report_info("Difference spotted", line);
     }
     else
     {
-        result = similarities.insert(line);
-        if (!result.second && debug_mode)
-        {
-            log.report_warn(std::string().append("Insertion failed: ").append(line).c_str());
-        }
+        if (print_lines)
+            line = std::string("[").append(file_name).append("] ").append(line);
+
+        result = similarities.insert(similarities.end(), line);
         if (debug_mode)
             log.report_info("Similarity spotted", line);
     }
 }
 
-void Differentiator::compare(std::set<std::string> *first_file_data, std::set<std::string> *second_file_data)
+void Differentiator::compare(std::list<std::string> *first_file_data, std::list<std::string> *second_file_data, std::string file_name)
 {
     try
     {
-        std::set<std::string>::iterator i;
+        std::list<std::string>::iterator i;
         auto begin = first_file_data->begin();
         auto end = first_file_data->end();
 
@@ -181,7 +179,7 @@ void Differentiator::compare(std::set<std::string> *first_file_data, std::set<st
             log.report_info("Writing Data started");
         for (i = begin; i != end; i++)
         {
-            write_data(*i, second_file_data);
+            write_data(*i, second_file_data, file_name);
         }
         if (debug_mode)
             log.report_info("Writing Data finished successfully\n");
@@ -196,8 +194,10 @@ void Differentiator::basic_comparing()
 {
     std::cout << colors.BLUE << "<=> BASIC COMPARING <=>\n"
               << colors.DEFAULT;
+    if (print_lines)
+        set_print_lines(false);
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
-    compare(first_file_data, second_file_data);
+    compare(first_file_data, second_file_data, file_handler.get_first_file_name());
     print_result(DIFFERENCES, file_handler.get_first_file_name());
 }
 
@@ -205,8 +205,10 @@ void Differentiator::side_by_side_comparing()
 {
     std::cout << colors.PURPLE << "\\\\\\\\\\\\ SIDE BY SIDE COMPARING //////\n"
               << colors.PURPLE;
+    if (print_lines)
+        set_print_lines(false);
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
-    compare(first_file_data, second_file_data);
+    compare(first_file_data, second_file_data, file_handler.get_first_file_name());
     print_result(DIFFERENCES, file_handler.get_first_file_name());
     cleanup();
     std::string line_separator = "----------------------------------------------";
@@ -214,7 +216,7 @@ void Differentiator::side_by_side_comparing()
               << colors.PURPLE
               << line_separator << colors.DEFAULT << "\n\n";
     print_names_of_comparing_files(file_handler.get_second_file_name(), file_handler.get_first_file_name());
-    compare(second_file_data, first_file_data);
+    compare(second_file_data, first_file_data, file_handler.get_second_file_name());
     print_result(DIFFERENCES, file_handler.get_second_file_name());
 }
 
@@ -223,8 +225,8 @@ void Differentiator::smart_comparing()
     std::cout << colors.YELLOW << "<<{:}>> SMART COMPARING <<{:}>>\n"
               << colors.DEFAULT;
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
-    compare(first_file_data, second_file_data);
-    compare(second_file_data, first_file_data);
+    compare(first_file_data, second_file_data, file_handler.get_first_file_name());
+    compare(second_file_data, first_file_data, file_handler.get_second_file_name());
     if (differences.empty() || check_blank_line(&differences))
     {
         if (debug_mode)
@@ -257,4 +259,11 @@ void Differentiator::set_debug_mode(bool mode)
 {
     this->debug_mode = mode;
     file_handler.set_debug_mode(mode);
+}
+
+void Differentiator::set_print_lines(bool print_lines)
+{
+    this->print_lines = print_lines;
+    if (debug_mode)
+        log.report_info("Showing lines number and file name");
 }

@@ -179,17 +179,30 @@ std::string FileHandler::get_parsed_line_number(int line_number)
         return parser_line_number;
 }
 
+void FileHandler::read_file(std::ifstream *file, std::list<std::string> *file_data)
+{
+    std::string line;
+    while (check_file_state(file))
+    {
+        std::getline(*file, line);
+        if (line == " " || line == "\n" || line == "")
+            continue;
+        file_data->push_back(line);
+    }
+}
+
 void FileHandler::read_file(std::ifstream *file, std::set<std::string> *file_data)
 {
-    int line_number = 1;
     std::string parsed_line_number;
     std::string line;
     while (check_file_state(file))
     {
         std::getline(*file, line);
-        //parsed_line_number = get_parsed_line_number(line_number).append(" ");
-        //file_data->insert(parsed_line_number.append(line));
-        //line_number++;
+        if (line == " " || line == "\n")
+            continue;
+        // parsed_line_number = get_parsed_line_number(line_number).append(" ");
+        // file_data->insert(parsed_line_number.append(line));
+        // line_number++;
 
         file_data->insert(line);
     }
@@ -199,10 +212,10 @@ void FileHandler::read_files()
 {
     if (debug_mode)
         log.report_info("Files reading started");
-    read_file(&first_file, &first_file_data);
+    read_file(&first_file, &first_file_data_list);
     if (debug_mode)
         log.report_info("First file was read successfully", first_file_name);
-    read_file(&second_file, &second_file_data);
+    read_file(&second_file, &second_file_data_list);
     if (debug_mode)
         log.report_info("Second file was read successfully", second_file_name);
     set_files_to_start();
@@ -210,26 +223,26 @@ void FileHandler::read_files()
         log.report_info("Files reading ended successfully");
 }
 
-std::set<std::string> *FileHandler::get_first_file_data()
+std::list<std::string> *FileHandler::get_first_file_data()
 {
-    if (first_file_data.size() == 0)
+    if (first_file_data_list.size() == 0)
     {
         log.report_error("No input data from file", first_file_name);
         close_files();
         exit(1);
     }
-    return &first_file_data;
+    return &first_file_data_list;
 }
 
-std::set<std::string> *FileHandler::get_second_file_data()
+std::list<std::string> *FileHandler::get_second_file_data()
 {
-    if (second_file_data.size() == 0)
+    if (second_file_data_list.size() == 0)
     {
         log.report_error("No input data from file", second_file_name);
         close_files();
         exit(1);
     }
-    return &second_file_data;
+    return &second_file_data_list;
 }
 
 std::ifstream *FileHandler::get_first_file()

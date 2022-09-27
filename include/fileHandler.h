@@ -3,6 +3,7 @@
 #include "logger.h"
 #include "FileTypes.h"
 #include <fstream>
+#include <list>
 #include <set>
 class FileHandler
 {
@@ -16,6 +17,9 @@ private:
     bool debug_mode = false;
     Logger log;
     FileTypes types;
+
+    std::list<std::string> first_file_data_list;
+    std::list<std::string> second_file_data_list;
 
     std::set<std::string> first_file_data;
     std::set<std::string> second_file_data;
@@ -52,8 +56,8 @@ public:
     void set_debug_mode(bool mode);
     void set_files_to_start();
 
-    std::set<std::string> *get_first_file_data();
-    std::set<std::string> *get_second_file_data();
+    std::list<std::string> *get_first_file_data();
+    std::list<std::string> *get_second_file_data();
 
     class FileOpeningFailure : public std::exception
     {
@@ -70,6 +74,7 @@ private:
     bool check_file_state(std::ifstream *file);
     bool verify_files();
     void read_files();
+    void read_file(std::ifstream *file, std::list<std::string> *file_data);
     void read_file(std::ifstream *file, std::set<std::string> *file_data);
     void close_files();
 };
