@@ -42,6 +42,7 @@ private:
     void print_difference_percentage(); 
     void cleanup();
     bool check_blank_line(std::set<std::string> *file_data);
+    void print_number_of_lines(int differences, int similarities, int all);
 };
 
 #endif // !DIFFERENTIATOR_H

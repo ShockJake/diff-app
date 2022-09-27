@@ -65,6 +65,7 @@ public:
 
 private:
     std::string get_file_type(std::string &file_name);
+    std::string get_parsed_line_number(int line_number);
     bool check_file_type();
     bool check_file_state(std::ifstream *file);
     bool verify_files();

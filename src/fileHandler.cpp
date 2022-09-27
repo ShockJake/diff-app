@@ -167,6 +167,18 @@ bool FileHandler::check_file_state(std::ifstream *file)
     return true;
 }
 
+std::string FileHandler::get_parsed_line_number(int line_number)
+{
+    std::string parser_line_number = std::to_string(line_number);
+    if (line_number < 10)
+        return std::string("00").append(parser_line_number);
+
+    if (line_number >= 10 && line_number < 100)
+        return std::string("0").append(parser_line_number);
+    else
+        return parser_line_number;
+}
+
 void FileHandler::read_file(std::ifstream *file, std::set<std::string> *file_data)
 {
     int line_number = 1;
@@ -175,15 +187,11 @@ void FileHandler::read_file(std::ifstream *file, std::set<std::string> *file_dat
     while (check_file_state(file))
     {
         std::getline(*file, line);
-        if (line_number < 10)
-            parsed_line_number = std::string("[00").append(std::to_string(line_number));
-        if (line_number < 100)
-            parsed_line_number = std::string("[0").append(std::to_string(line_number));
-        else
-            parsed_line_number = std::string("[").append(std::to_string(line_number));
+        //parsed_line_number = get_parsed_line_number(line_number).append(" ");
+        //file_data->insert(parsed_line_number.append(line));
+        //line_number++;
 
-        file_data->insert(parsed_line_number.append("] ").append(line));
-        line_number++;
+        file_data->insert(line);
     }
 }
 
@@ -193,10 +201,10 @@ void FileHandler::read_files()
         log.report_info("Files reading started");
     read_file(&first_file, &first_file_data);
     if (debug_mode)
-        log.report_info("First file was read successfully");
+        log.report_info("First file was read successfully", first_file_name);
     read_file(&second_file, &second_file_data);
     if (debug_mode)
-        log.report_info("Second file was read successfully");
+        log.report_info("Second file was read successfully", second_file_name);
     set_files_to_start();
     if (debug_mode)
         log.report_info("Files reading ended successfully");
