@@ -7,11 +7,12 @@
 class Logger
 {
 private:
-    std::string get_date();
-    
+    char *get_date();
+
     ColorProperties colors;
     void print_info();
     void print_warn();
+    char actual_time[19];
 
 public:
     Logger();

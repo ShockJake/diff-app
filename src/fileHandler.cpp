@@ -35,6 +35,10 @@ void FileHandler::close_files()
     {
         log.report_error("Cannot close file", e.what());
     }
+    catch (const std::exception &e)
+    {
+        log.report_error("Cannot close file", e.what());
+    }
 }
 
 std::string FileHandler::get_file_type(std::string &file_name)
@@ -60,32 +64,27 @@ std::string FileHandler::get_file_type(std::string &file_name)
         return types.UNKNOWN;
 }
 
-bool FileHandler::check_file_type()
+bool FileHandler::check_file_type(std::string &file_type, std::string &file_name)
 {
-    std::string error_msg = "Invalid file type of file ";
-    std::string first_file_type = get_file_type(first_file_name);
-    std::string second_file_type = get_file_type(second_file_name);
-
-    if (first_file_type != types.FILE)
+    if (file_type != types.FILE)
     {
+        std::string error_msg = "Invalid file type of file ";
         if (debug_mode)
             log.report_error(error_msg
                                  .append(first_file_name)
                                  .append(", actual type is: ")
-                                 .append(first_file_type));
+                                 .append(file_type));
         return false;
     }
-    if (second_file_type != types.FILE)
-    {
-        if (debug_mode)
-            log.report_error(error_msg
-                                 .append(second_file_name)
-                                 .append(", actual type is: ")
-                                 .append(second_file_type));
-        return false;
-    }
-
     return true;
+}
+
+bool FileHandler::check_files_type()
+{
+    std::string first_file_type = get_file_type(first_file_name);
+    std::string second_file_type = get_file_type(second_file_name);
+    bool result = check_file_type(first_file_type, first_file_name) && check_file_type(second_file_type, second_file_name);
+    return result;
 }
 
 bool FileHandler::verify_files()
@@ -103,7 +102,7 @@ bool FileHandler::verify_files()
         return false;
     }
 
-    if (!check_file_type())
+    if (!check_files_type())
         return false;
 
     if (debug_mode)
@@ -191,23 +190,6 @@ void FileHandler::read_file(std::ifstream *file, std::list<std::string> *file_da
     }
 }
 
-void FileHandler::read_file(std::ifstream *file, std::set<std::string> *file_data)
-{
-    std::string parsed_line_number;
-    std::string line;
-    while (check_file_state(file))
-    {
-        std::getline(*file, line);
-        if (line == " " || line == "\n")
-            continue;
-        // parsed_line_number = get_parsed_line_number(line_number).append(" ");
-        // file_data->insert(parsed_line_number.append(line));
-        // line_number++;
-
-        file_data->insert(line);
-    }
-}
-
 void FileHandler::read_files()
 {
     if (debug_mode)
@@ -227,9 +209,10 @@ std::list<std::string> *FileHandler::get_first_file_data()
 {
     if (first_file_data_list.size() == 0)
     {
-        log.report_error("No input data from file", first_file_name);
+        if (debug_mode)
+            log.report_error("No input data from file", first_file_name);
         close_files();
-        exit(1);
+        throw std::fstream::failure("File is empty");
     }
     return &first_file_data_list;
 }
@@ -238,9 +221,10 @@ std::list<std::string> *FileHandler::get_second_file_data()
 {
     if (second_file_data_list.size() == 0)
     {
-        log.report_error("No input data from file", second_file_name);
+        if (debug_mode)
+            log.report_error("No input data from file", second_file_name);
         close_files();
-        exit(1);
+        throw std::fstream::failure("File is empty");
     }
     return &second_file_data_list;
 }

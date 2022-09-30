@@ -6,12 +6,14 @@ OBJS = main.o 	 		   \
 	./src/differentiator.o \
 	./src/fileHandler.o    \
 	./src/logger.o		   \
+	./src/functions.o
 
-BUILDED = ./build/main.o 	  \
-	 ./build/differentiator.o \
-	 ./build/fileHandler.o 	  \
-	 ./build/logger.o		  \
-	 ./build/colorProperties.o 
+BUILDED = ./build/main.o 	   \
+	 ./build/differentiator.o  \
+	 ./build/fileHandler.o 	   \
+	 ./build/logger.o          \
+	 ./build/colorProperties.o \
+	 ./build/functions.o
 
 BLUE_COLOR = "\033[0;34m"
 DEFAULT_COLOR = "\033[0m"
@@ -39,10 +41,11 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $@ $<
 
 # Header dependencies
-main.o: 			./include/differentiator.h
-differentiator.o: 	./include/differentiator.h .include/colorProperties.h
+main.o: 			./include/functions.h
+differentiator.o: 	./include/differentiator.h ./include/colorProperties.h
 fileHandler.o: 		./include/fileHandler.h
 logger.o: 			./include/logger.h .include/colorProperties.h
+functions.o:		./include/functions.h ./include/differentiator.h
 
 .Phony:
 	clean

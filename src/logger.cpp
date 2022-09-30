@@ -7,15 +7,14 @@ Logger::Logger() {}
 
 Logger::~Logger() {}
 
-std::string Logger::get_date()
+char *Logger::get_date()
 {
     time_t t = time(NULL);
     struct tm time = *localtime(&t);
-    char result[19];
-    memset(result, 0, sizeof(result));
     char pattern[] = "%d-%02d-%02d %02d:%02d:%02d";
-    sprintf(result, pattern, time.tm_mday, time.tm_mon + 1, time.tm_year + 1900, time.tm_hour, time.tm_min, time.tm_sec);
-    return std::string(result);
+    memset(actual_time, 0, sizeof(actual_time));
+    sprintf(actual_time, pattern, time.tm_mday, time.tm_mon + 1, time.tm_year + 1900, time.tm_hour, time.tm_min, time.tm_sec);
+    return actual_time;
 }
 
 void Logger::print_info()
@@ -30,80 +29,76 @@ void Logger::print_warn()
 
 void Logger::report_info(const char *msg)
 {
-    std::cout << get_date();
+    printf("%s", get_date());
     print_info();
-    std::cout << msg << '\n';
+    printf("%s\n", msg);
 }
 
 void Logger::report_info(const char *msg, std::string &file_name)
 {
-    std::cout << get_date();
+    printf("%s", get_date());
     print_info();
-    std::cout << msg << " : " << file_name << '\n';
+    printf("%s : %s\n", msg, file_name.c_str());
 }
 
 void Logger::report_info(std::string &msg, std::string &file_name)
 {
-    std::cout << get_date();
+    printf("%s", get_date());
     print_info();
-    std::cout << msg << " : " << file_name << '\n';
+    printf("%s : %s\n", msg.c_str(), file_name.c_str());
 }
 
 void Logger::report_info(const char *msg, const char *e)
 {
-    std::cout << get_date();
+    printf("%s", get_date());
     print_info();
-    std::cout << msg << " : " << e << '\n';
+    printf("%s : %s\n", msg, e);
 }
 
 void Logger::report_warn(const char *msg)
 {
-    std::cout << get_date();
+    printf("%s", get_date());
     print_warn();
-    std::cout << msg << '\n';
+    printf("%s\n", msg);
 }
 
 void Logger::report_warn(const char *msg, std::string &file_name)
 {
-    std::cout << get_date();
+    printf("%s", get_date());
     print_warn();
-    std::cout << msg << " : " << file_name << '\n';
+    printf("%s : %s\n", msg, file_name.c_str());
 }
 
 void Logger::report_warn(std::string &msg, std::string &file_name)
 {
-    std::cout << get_date();
+    printf("%s", get_date());
     print_warn();
-    std::cout << msg << " : " << file_name << '\n';
+    printf("%s : %s\n", msg.c_str(), file_name.c_str());
 }
 
 void Logger::report_warn(const char *msg, const char *e)
 {
-    std::cout << get_date();
+    printf("%s", get_date());
     print_warn();
-    std::cout << msg << " : " << e << '\n';
+    printf("%s : %s\n", msg, e);
 }
 
 void Logger::report_error(std::string &msg)
 {
-    std::cerr << colors.RED << get_date() << " - ERROR - ";
-    std::cerr << msg << colors.DEFAULT << '\n';
+    printf("%s%s - ERROR - %s%s\n", colors.RED, get_date(), msg.c_str(), colors.DEFAULT);
 }
 
 void Logger::report_error(std::string &msg, std::string &file_name)
 {
-    std::cerr << colors.RED << get_date() << " - ERROR - ";
-    std::cerr << msg << ": " << file_name << colors.DEFAULT << '\n';
+    printf("%s%s - ERROR - %s: %s%s\n", colors.RED, get_date(), msg.c_str(), file_name.c_str(), colors.DEFAULT);
 }
 
 void Logger::report_error(const char *msg, std::string &file_name)
 {
-    std::cerr << colors.RED << get_date() << " - ERROR - ";
-    std::cerr << msg << ": " << file_name << colors.DEFAULT << '\n';
+    printf("%s%s - ERROR - %s: %s%s\n", colors.RED, get_date(), msg, file_name.c_str(), colors.DEFAULT);
 }
 
 void Logger::report_error(const char *msg, const char *exception)
 {
-    std::cerr << colors.RED << get_date() << " - ERROR - ";
-    std::cerr << msg << ": " << exception << colors.DEFAULT << '\n';
+    printf("%s%s - ERROR - %s: %s%s\n", colors.RED, get_date(), msg, exception, colors.DEFAULT);
 }
