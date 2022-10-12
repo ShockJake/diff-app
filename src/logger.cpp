@@ -27,78 +27,78 @@ void Logger::print_warn()
     printf("%s - WARN - %s", colors.YELLOW, colors.DEFAULT);
 }
 
-void Logger::report_info(const char *msg)
+void Logger::info(const char *msg)
 {
     printf("%s", get_date());
     print_info();
     printf("%s\n", msg);
 }
 
-void Logger::report_info(const char *msg, std::string &file_name)
+void Logger::info(const char *msg, std::string &file_name)
 {
     printf("%s", get_date());
     print_info();
     printf("%s : %s\n", msg, file_name.c_str());
 }
 
-void Logger::report_info(std::string &msg, std::string &file_name)
+void Logger::info(std::string &msg, std::string &file_name)
 {
     printf("%s", get_date());
     print_info();
     printf("%s : %s\n", msg.c_str(), file_name.c_str());
 }
 
-void Logger::report_info(const char *msg, const char *e)
+void Logger::info(const char *msg, const char *e)
 {
     printf("%s", get_date());
     print_info();
     printf("%s : %s\n", msg, e);
 }
 
-void Logger::report_warn(const char *msg)
+void Logger::warn(const char *msg)
 {
     printf("%s", get_date());
     print_warn();
     printf("%s\n", msg);
 }
 
-void Logger::report_warn(const char *msg, std::string &file_name)
+void Logger::warn(const char *msg, std::string &file_name)
 {
     printf("%s", get_date());
     print_warn();
     printf("%s : %s\n", msg, file_name.c_str());
 }
 
-void Logger::report_warn(std::string &msg, std::string &file_name)
+void Logger::warn(std::string &msg, std::string &file_name)
 {
     printf("%s", get_date());
     print_warn();
     printf("%s : %s\n", msg.c_str(), file_name.c_str());
 }
 
-void Logger::report_warn(const char *msg, const char *e)
+void Logger::warn(const char *msg, const char *e)
 {
     printf("%s", get_date());
     print_warn();
     printf("%s : %s\n", msg, e);
 }
 
-void Logger::report_error(std::string &msg)
+void Logger::error(std::string &msg)
 {
     printf("%s%s - ERROR - %s%s\n", colors.RED, get_date(), msg.c_str(), colors.DEFAULT);
 }
 
-void Logger::report_error(std::string &msg, std::string &file_name)
+void Logger::error(std::string &msg, std::string &file_name)
 {
     printf("%s%s - ERROR - %s: %s%s\n", colors.RED, get_date(), msg.c_str(), file_name.c_str(), colors.DEFAULT);
 }
 
-void Logger::report_error(const char *msg, std::string &file_name)
+void Logger::error(const char *msg, std::string &file_name)
 {
     printf("%s%s - ERROR - %s: %s%s\n", colors.RED, get_date(), msg, file_name.c_str(), colors.DEFAULT);
 }
 
-void Logger::report_error(const char *msg, const char *exception)
+void Logger::error(const char *msg, const char *exception)
 {
     printf("%s%s - ERROR - %s: %s%s\n", colors.RED, get_date(), msg, exception, colors.DEFAULT);
 }

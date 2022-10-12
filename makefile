@@ -1,6 +1,6 @@
 CC 		= g++
-CFLAGS 	= -pedantic -Wall -c -std=c++17 -o
-LFLAGS 	= -g -o
+CFLAGS 	= -pedantic -Wall -Wextra -c -g -std=c++17 -o
+LFLAGS 	= -o
 
 OBJS = main.o 	 		   \
 	./src/differentiator.o \

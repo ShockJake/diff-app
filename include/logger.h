@@ -18,20 +18,20 @@ public:
     Logger();
     ~Logger();
 
-    void report_info(std::string &msg, std::string &file_name);
-    void report_info(const char *msg, std::string &file_name);
-    void report_info(const char *msg, const char *exception);
-    void report_info(const char *msg);
+    void info(std::string &msg, std::string &file_name);
+    void info(const char *msg, std::string &file_name);
+    void info(const char *msg, const char *exception);
+    void info(const char *msg);
 
-    void report_warn(std::string &msg, std::string &file_name);
-    void report_warn(const char *msg, std::string &file_name);
-    void report_warn(const char *msg, const char *exception);
-    void report_warn(const char *msg);
+    void warn(std::string &msg, std::string &file_name);
+    void warn(const char *msg, std::string &file_name);
+    void warn(const char *msg, const char *exception);
+    void warn(const char *msg);
 
-    void report_error(std::string &msg);
-    void report_error(std::string &msg, std::string &file_name);
-    void report_error(const char *msg, const char *exception);
-    void report_error(const char *msg, std::string &file_name);
+    void error(std::string &msg);
+    void error(std::string &msg, std::string &file_name);
+    void error(const char *msg, const char *exception);
+    void error(const char *msg, std::string &file_name);
 };
 
 #endif // !LOGGER_H

@@ -17,13 +17,13 @@ Differentiator::Differentiator(std::string &first_file_name, std::string &second
     catch (const std::ifstream::failure &e)
     {
         if (debug_mode)
-            log.report_error("Opening files failure", e.what());
+            log.error("Opening files failure", e.what());
         throw FileHandler::FileOpeningFailure();
     }
     catch (const std::exception &e)
     {
         if (debug_mode)
-            log.report_error("File reading error", e.what());
+            log.error("File reading error", e.what());
         throw FileProceedingFailure();
     }
 }
@@ -33,13 +33,13 @@ Differentiator::~Differentiator() {}
 void Differentiator::print_number_of_lines(int differences, int similarities, int all)
 {
     std::string msg(std::string("Different lines: \t"));
-    log.report_info(msg.append(std::to_string(differences)).c_str());
+    log.info(msg.append(std::to_string(differences)).c_str());
 
     msg = std::string("Similar lines: \t");
-    log.report_info(msg.append(std::to_string(similarities)).c_str());
+    log.info(msg.append(std::to_string(similarities)).c_str());
 
     msg = std::string("All lines: \t");
-    log.report_info(msg.append(std::to_string(all)).c_str());
+    log.info(msg.append(std::to_string(all)).c_str());
 }
 
 void Differentiator::print_difference_percentage()
@@ -125,11 +125,11 @@ void Differentiator::print_result(bool result_type)
 void Differentiator::cleanup()
 {
     if (debug_mode)
-        log.report_info("Clearing started...");
+        log.info("Clearing started...");
     similarities.clear();
     differences.clear();
     if (debug_mode)
-        log.report_info("Clearing finished...");
+        log.info("Clearing finished...");
 }
 
 void Differentiator::set_files_data()
@@ -179,7 +179,7 @@ void Differentiator::write_data(std::string line, std::list<std::string> *file_d
 
         result = differences.insert(differences.end(), line);
         if (debug_mode)
-            log.report_info("Difference spotted", line);
+            log.info("Difference spotted", line);
     }
     else
     {
@@ -188,7 +188,7 @@ void Differentiator::write_data(std::string line, std::list<std::string> *file_d
 
         result = similarities.insert(similarities.end(), line);
         if (debug_mode)
-            log.report_info("Similarity spotted", line);
+            log.info("Similarity spotted", line);
     }
 }
 
@@ -202,18 +202,18 @@ void Differentiator::compare(std::list<std::string> *first_file_data, std::list<
         int line_number = 1;
 
         if (debug_mode)
-            log.report_info("Writing Data started");
+            log.info("Writing Data started");
         for (i = begin; i != end; i++)
         {
             write_data(*i, second_file_data, file_name, line_number);
             line_number++;
         }
         if (debug_mode)
-            log.report_info("Writing Data finished successfully\n");
+            log.info("Writing Data finished successfully\n");
     }
     catch (const std::exception &e)
     {
-        log.report_error("Comparing files failure", e.what());
+        log.error("Comparing files failure", e.what());
     }
 }
 
@@ -234,10 +234,9 @@ void Differentiator::side_by_side_comparing()
     compare(first_file_data, second_file_data, file_handler.get_first_file_name());
     print_result(DIFFERENCES, file_handler.get_first_file_name());
     cleanup();
-    std::string line_separator = "----------------------------------------------";
+
     std::cout << "\n"
-              << colors.PURPLE
-              << line_separator << colors.DEFAULT << "\n\n";
+              << colors.PURPLE << line_separator << colors.DEFAULT << "\n\n";
     print_names_of_comparing_files(file_handler.get_second_file_name(), file_handler.get_first_file_name());
     compare(second_file_data, first_file_data, file_handler.get_second_file_name());
     print_result(DIFFERENCES, file_handler.get_second_file_name());
@@ -250,24 +249,10 @@ void Differentiator::smart_comparing()
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
     compare(first_file_data, second_file_data, file_handler.get_first_file_name());
     compare(second_file_data, first_file_data, file_handler.get_second_file_name());
-    if (differences.empty() || check_blank_line(&differences))
-    {
-        if (debug_mode)
-            print_number_of_lines(differences.size(), similarities.size(), differences.size() + similarities.size());
 
-        std::cout << colors.BLUE << "Files are identical\n"
-                  << colors.DEFAULT;
+    if (check_identical_or_totally_different())
         return;
-    }
-    if (similarities.empty() || check_blank_line(&similarities))
-    {
-        if (debug_mode)
-            print_number_of_lines(differences.size(), similarities.size(), differences.size() + similarities.size());
 
-        std::cout << colors.BLUE << "Files are totally different\n"
-                  << colors.DEFAULT;
-        return;
-    }
     std::cout << colors.YELLOW << "Differences:\n"
               << colors.DEFAULT;
     print_result(DIFFERENCES);
@@ -276,6 +261,29 @@ void Differentiator::smart_comparing()
     print_result(SIMILARITIES);
     std::cout << "\n";
     print_difference_percentage();
+}
+
+bool Differentiator::check_identical_or_totally_different()
+{
+    if (differences.empty() || check_blank_line(&differences))
+    {
+        if (debug_mode)
+            print_number_of_lines(differences.size(), similarities.size(), differences.size() + similarities.size());
+
+        std::cout << colors.BLUE << "Files are identical\n"
+                  << colors.DEFAULT;
+        return true;
+    }
+    if (similarities.empty() || check_blank_line(&similarities))
+    {
+        if (debug_mode)
+            print_number_of_lines(differences.size(), similarities.size(), differences.size() + similarities.size());
+
+        std::cout << colors.BLUE << "Files are totally different\n"
+                  << colors.DEFAULT;
+        return true;
+    }
+    return false;
 }
 
 void Differentiator::set_debug_mode(bool mode)
@@ -288,5 +296,5 @@ void Differentiator::set_print_lines(bool print_lines)
 {
     this->print_lines = print_lines;
     if (debug_mode && print_lines)
-        log.report_info("Showing lines number and file name");
+        log.info("Showing lines number and file name");
 }

@@ -10,12 +10,12 @@ FileHandler::FileHandler(std::string &first_file_name, std::string &second_file_
 {
     if (debug_mode)
     {
-        log.report_info("Opening files");
+        log.info("Opening files");
     }
     open_files(first_file_name, second_file_name);
     if (debug_mode)
     {
-        log.report_info("Files are opened successfully");
+        log.info("Files are opened successfully");
     }
 }
 
@@ -33,11 +33,11 @@ void FileHandler::close_files()
     }
     catch (const std::ifstream::failure &e)
     {
-        log.report_error("Cannot close file", e.what());
+        log.error("Cannot close file", e.what());
     }
     catch (const std::exception &e)
     {
-        log.report_error("Cannot close file", e.what());
+        log.error("Cannot close file", e.what());
     }
 }
 
@@ -70,8 +70,8 @@ bool FileHandler::check_file_type(std::string &file_type, std::string &file_name
     {
         std::string error_msg = "Invalid file type of file ";
         if (debug_mode)
-            log.report_error(error_msg
-                                 .append(first_file_name)
+            log.error(error_msg
+                                 .append(file_name)
                                  .append(", actual type is: ")
                                  .append(file_type));
         return false;
@@ -92,13 +92,13 @@ bool FileHandler::verify_files()
     if (!first_file.is_open())
     {
         if (debug_mode)
-            log.report_error("Cannot open file", first_file_name);
+            log.error("Cannot open file", first_file_name);
         return false;
     }
     if (!second_file.is_open())
     {
         if (debug_mode)
-            log.report_error("Cannot open file ", second_file_name);
+            log.error("Cannot open file ", second_file_name);
         return false;
     }
 
@@ -106,7 +106,7 @@ bool FileHandler::verify_files()
         return false;
 
     if (debug_mode)
-        log.report_info("Files are verified");
+        log.info("Files are verified");
 
     return true;
 }
@@ -123,15 +123,15 @@ void FileHandler::set_files_to_start()
     catch (const std::ios_base::failure &e)
     {
         if (debug_mode)
-            log.report_error("Fail in setting files to start", e.what());
+            log.error("Fail in setting files to start", e.what());
     }
     catch (const std::exception &e)
     {
         if (debug_mode)
-            log.report_error("Fail in setting files to start", e.what());
+            log.error("Fail in setting files to start", e.what());
     }
     if (debug_mode)
-        log.report_info("Files were set on the start position");
+        log.info("Files were set on the start position");
 }
 
 void FileHandler::open_files(std::string &first_file_name, std::string &second_file_name)
@@ -143,7 +143,7 @@ void FileHandler::open_files(std::string &first_file_name, std::string &second_f
     this->second_file.open(second_file_name);
 
     if (debug_mode)
-        log.report_info("File verification started");
+        log.info("File verification started");
 
     if (!verify_files())
     {
@@ -193,16 +193,16 @@ void FileHandler::read_file(std::ifstream *file, std::list<std::string> *file_da
 void FileHandler::read_files()
 {
     if (debug_mode)
-        log.report_info("Files reading started");
+        log.info("Files reading started");
     read_file(&first_file, &first_file_data_list);
     if (debug_mode)
-        log.report_info("First file was read successfully", first_file_name);
+        log.info("First file was read successfully", first_file_name);
     read_file(&second_file, &second_file_data_list);
     if (debug_mode)
-        log.report_info("Second file was read successfully", second_file_name);
+        log.info("Second file was read successfully", second_file_name);
     set_files_to_start();
     if (debug_mode)
-        log.report_info("Files reading ended successfully");
+        log.info("Files reading ended successfully");
 }
 
 std::list<std::string> *FileHandler::get_first_file_data()
@@ -210,7 +210,7 @@ std::list<std::string> *FileHandler::get_first_file_data()
     if (first_file_data_list.size() == 0)
     {
         if (debug_mode)
-            log.report_error("No input data from file", first_file_name);
+            log.error("No input data from file", first_file_name);
         close_files();
         throw std::fstream::failure("File is empty");
     }
@@ -222,7 +222,7 @@ std::list<std::string> *FileHandler::get_second_file_data()
     if (second_file_data_list.size() == 0)
     {
         if (debug_mode)
-            log.report_error("No input data from file", second_file_name);
+            log.error("No input data from file", second_file_name);
         close_files();
         throw std::fstream::failure("File is empty");
     }
@@ -253,5 +253,5 @@ void FileHandler::set_debug_mode(bool mode)
 {
     this->debug_mode = mode;
     if (debug_mode)
-        log.report_info("Debug mode is activated");
+        log.info("Debug mode is activated");
 }

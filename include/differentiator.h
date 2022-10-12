@@ -16,6 +16,7 @@ private:
 
     const bool SIMILARITIES = true;
     const bool DIFFERENCES = false;
+    std::string line_separator = "----------------------------------------------";
 
     std::list<std::string> *first_file_data = nullptr;
     std::list<std::string> *second_file_data = nullptr;
@@ -55,6 +56,7 @@ private:
     void cleanup();
     bool check_blank_line(std::list<std::string> *file_data);
     void print_number_of_lines(int differences, int similarities, int all);
+    bool check_identical_or_totally_different();
 };
 
 #endif // !DIFFERENTIATOR_H
