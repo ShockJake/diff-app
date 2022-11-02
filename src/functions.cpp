@@ -14,15 +14,15 @@ void print_usage(ColorProperties &colors)
 void print_provided_parameters(int argc, const char **argv, int start_point)
 {
     for (int i = start_point; i < argc - 1; i++)
-        std::cout << argv[i] << ' ';
-    std::cout << argv[argc - 1] << '\n';
+        printf("%s ", argv[i]);
+    printf("%s\n", argv[argc - 1]);
 }
 
 void perform_fail(std::string error_msg, int argc, const char **argv)
 {
     ColorProperties colors;
-    std::cout << colors.RED << error_msg << colors.DEFAULT << '\n';
-    std::cout << "Provided arguments: ";
+    printf("%s%s%s\n", colors.RED, error_msg.c_str(), colors.DEFAULT);
+    printf("Provided arguments: ");
     print_provided_parameters(argc, argv, 0);
     print_usage(colors);
     exit(1);
