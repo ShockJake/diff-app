@@ -18,13 +18,14 @@ void print_provided_parameters(int argc, const char **argv, int start_point)
     printf("%s\n", argv[argc - 1]);
 }
 
-void perform_fail(std::string error_msg, int argc, const char **argv)
+void perform_fail(const std::string &error_msg, int argc, const char **argv, const Differentiator *diffApp)
 {
     ColorProperties colors;
     printf("%s%s%s\n", colors.RED, error_msg.c_str(), colors.DEFAULT);
     printf("Provided arguments: ");
     print_provided_parameters(argc, argv, 0);
     print_usage(colors);
+    delete diffApp;
     exit(1);
 }
 
@@ -52,7 +53,7 @@ bool check_provided_parameter(const char *parameter, bool *parameters)
     return true;
 }
 
-bool check_activated_modes(bool parameters[])
+bool check_activated_modes(const bool parameters[])
 {
     int active_modes_number = 0;
     for (int i = 0; i < PARAMETERS_AMOUNT - 2; i++)
@@ -72,12 +73,13 @@ bool check_basic_comparing(int argc, const char **argv)
         return true;
     if (argc == 4 && (std::string(argv[3]) == "-D" || std::string(argv[3]) == "-lf"))
         return true;
-    if (argc == 5 && ((std::string(argv[3]) == "-D" && std::string(argv[4]) == "-lf") || (std::string(argv[3]) == "-lf" && std::string(argv[4]) == "-D")))
+    if (argc == 5 && ((std::string(argv[3]) == "-D" && std::string(argv[4]) == "-lf") ||
+                      (std::string(argv[3]) == "-lf" && std::string(argv[4]) == "-D")))
         return true;
     return false;
 }
 
-void read_parameters(int argc, const char **argv, bool *parameters)
+void read_parameters(int argc, const char **argv, bool *parameters, const Differentiator *diffApp)
 {
     fill_parameters_with_false(parameters, PARAMETERS_AMOUNT);
     if (check_basic_comparing(argc, argv))
@@ -88,9 +90,9 @@ void read_parameters(int argc, const char **argv, bool *parameters)
         if (!check_provided_parameter(argv[i], parameters))
         {
             char err_msg[21] = "Unknown parameter : ";
-            perform_fail(std::string(err_msg).append(argv[i]), argc, argv);
+            perform_fail(std::string(err_msg).append(argv[i]), argc, argv, diffApp);
         }
     }
     if (!check_activated_modes(parameters))
-        perform_fail("More than one mode is activated", argc, argv);
+        perform_fail("More than one mode is activated", argc, argv, diffApp);
 }

@@ -21,31 +21,27 @@ private:
     std::list<std::string> first_file_data_list;
     std::list<std::string> second_file_data_list;
 
-    class FailbitException : public std::ios_base::failure::exception
+    class FailBitException : public std::ios_base::failure::exception
     {
-        const char *what() const throw()
+        [[nodiscard]] const char *what() const noexcept override
         {
             return "Delimiting character was not found or no characters were extracted at all";
         }
     };
 
-    class BadbitException : public std::ios_base::failure::exception
+    class BadBitException : public std::ios_base::failure::exception
     {
-        const char *what() const throw()
+        [[nodiscard]] const char *what() const noexcept override
         {
-            return "Error occured on stream";
+            return "Error occurred on stream";
         }
     };
 
 public:
-    FileHandler(std::string &first_file_name, std::string &second_file_name);
     FileHandler();
     ~FileHandler();
 
-    void open_files(std::string &first_file_name, std::string &second_file_name);
-
-    std::ifstream *get_first_file();
-    std::ifstream *get_second_file();
+    void open_files(std::string &first_file_to_open, std::string &second_file_to_open);
 
     std::string get_first_file_name();
     std::string get_second_file_name();
@@ -58,21 +54,20 @@ public:
 
     class FileOpeningFailure : public std::exception
     {
-        const char *what() const throw()
+        [[nodiscard]] const char *what() const noexcept override
         {
             return "File opening failure";
         }
     };
 
 private:
-    std::string get_file_type(std::string &file_name);
-    std::string get_parsed_line_number(int line_number);
+    std::string get_file_type(std::string &file_name) const;
     bool check_files_type();
     bool check_file_type(std::string &file_type, std::string &file_name);
-    bool check_file_state(std::ifstream *file);
+    static bool check_file_state(std::ifstream *file);
     bool verify_files();
     void read_files();
-    void read_file(std::ifstream *file, std::list<std::string> *file_data);
+    static void read_file(std::ifstream *file, std::list<std::string> *file_data);
     void close_files();
 };
 

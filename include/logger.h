@@ -10,9 +10,9 @@ private:
     char *get_date();
 
     ColorProperties colors;
-    void print_info();
-    void print_warn();
-    char actual_time[19];
+    void print_info() const;
+    void print_warn() const;
+    char actual_time[19]{};
 
 public:
     Logger();

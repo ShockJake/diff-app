@@ -1,15 +1,14 @@
 #include "../include/logger.h"
-#include <time.h>
-#include <iostream>
-#include <string.h>
+#include <ctime>
+#include <cstring>
 
-Logger::Logger() {}
+Logger::Logger() = default;
 
-Logger::~Logger() {}
+Logger::~Logger() = default;
 
 char *Logger::get_date()
 {
-    time_t t = time(NULL);
+    time_t t = time(nullptr);
     struct tm time = *localtime(&t);
     char pattern[] = "%d-%02d-%02d %02d:%02d:%02d";
     memset(actual_time, 0, sizeof(actual_time));
@@ -17,12 +16,12 @@ char *Logger::get_date()
     return actual_time;
 }
 
-void Logger::print_info()
+void Logger::print_info() const
 {
     printf("%s - INFO - %s", colors.GREEN, colors.DEFAULT);
 }
 
-void Logger::print_warn()
+void Logger::print_warn() const
 {
     printf("%s - WARN - %s", colors.YELLOW, colors.DEFAULT);
 }

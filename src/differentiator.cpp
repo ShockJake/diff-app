@@ -1,11 +1,10 @@
 #include "../include/differentiator.h"
-#include "../include/colorProperties.h"
 #include <iostream>
 #include <algorithm>
 #include <string>
-#include <utility>
 
-Differentiator::Differentiator(std::string &first_file_name, std::string &second_file_name, bool debug_mode, bool print_lines)
+Differentiator::Differentiator(std::string &first_file_name, std::string &second_file_name, bool debug_mode,
+                               bool print_lines)
 {
     try
     {
@@ -28,15 +27,16 @@ Differentiator::Differentiator(std::string &first_file_name, std::string &second
     }
 }
 
-Differentiator::~Differentiator() {}
+Differentiator::~Differentiator() = default;
 
-void Differentiator::print_number_of_lines(int differences, int similarities, int all)
+void Differentiator::print_number_of_lines(unsigned long long differentLines, unsigned long long similarLines,
+                                           unsigned long long all)
 {
     std::string msg(std::string("Different lines: \t"));
-    log.info(msg.append(std::to_string(differences)).c_str());
+    log.info(msg.append(std::to_string(differentLines)).c_str());
 
     msg = std::string("Similar lines: \t");
-    log.info(msg.append(std::to_string(similarities)).c_str());
+    log.info(msg.append(std::to_string(similarLines)).c_str());
 
     msg = std::string("All lines: \t");
     log.info(msg.append(std::to_string(all)).c_str());
@@ -44,10 +44,10 @@ void Differentiator::print_number_of_lines(int differences, int similarities, in
 
 void Differentiator::print_difference_percentage()
 {
-    double different_lines = (double)differences.size();
-    double similar_lines = (double)similarities.size();
-    double all_lines = different_lines + similar_lines;
-    double result = different_lines / all_lines * 100;
+    unsigned long long different_lines = differences.size();
+    unsigned long long similar_lines = similarities.size();
+    unsigned long long all_lines = different_lines + similar_lines;
+    double result = ((double) different_lines) / ((double) all_lines) * 100;
 
     if (debug_mode)
         print_number_of_lines(different_lines, similar_lines, all_lines);
@@ -55,22 +55,12 @@ void Differentiator::print_difference_percentage()
     printf("%sFiles are %f%% different%s\n", colors.GREEN, result, colors.DEFAULT);
 }
 
-void Differentiator::print_result(bool result_type, std::string file_name)
+void Differentiator::print_differences(const std::string &file_name)
 {
     std::list<std::string>::iterator i;
-    std::list<std::string>::iterator begin;
-    std::list<std::string>::iterator end;
+    auto begin = differences.begin();
+    auto end = differences.end();
 
-    if (result_type)
-    {
-        begin = similarities.begin();
-        end = similarities.end();
-    }
-    else
-    {
-        begin = differences.begin();
-        end = differences.end();
-    }
     printf("%sLines that are only present in - %s%s\n", colors.BLUE, file_name.c_str(), colors.DEFAULT);
     for (i = begin; i != end; i++)
     {
@@ -101,8 +91,7 @@ void Differentiator::print_result(bool result_type)
     {
         begin = similarities.begin();
         end = similarities.end();
-    }
-    else
+    } else
     {
         begin = differences.begin();
         end = differences.end();
@@ -137,9 +126,11 @@ void Differentiator::set_files_data()
     this->second_file_data = file_handler.get_second_file_data();
 }
 
-void Differentiator::print_names_of_comparing_files(std::string first_file_name, std::string second_file_name)
+void Differentiator::print_names_of_comparing_files(const std::string &first_file_name,
+                                                    const std::string &second_file_name) const
 {
-    printf("%sComparing files: %s ->>- %s%s\n", colors.CYAN, first_file_name.c_str(), second_file_name.c_str(), colors.DEFAULT);
+    printf("%sComparing files: %s ->>- %s%s\n", colors.CYAN, first_file_name.c_str(), second_file_name.c_str(),
+           colors.DEFAULT);
 }
 
 std::string Differentiator::get_parsed_line_number(int line_number)
@@ -147,25 +138,25 @@ std::string Differentiator::get_parsed_line_number(int line_number)
     std::string parser_line_number = std::to_string(line_number);
     if (line_number < 10)
         return std::string("00").append(parser_line_number);
-
-    if (line_number >= 10 && line_number < 100)
+    if (line_number < 100)
         return std::string("0").append(parser_line_number);
     else
         return parser_line_number;
 }
 
-std::string Differentiator::get_line_prefix(std::string &parsed_line_number, std::string &file_name)
+std::string Differentiator::get_line_prefix(std::string &parsed_line_number, std::string &file_name) const
 {
     return std::string(colors.YELLOW)
-        .append("[")
-        .append(parsed_line_number)
-        .append(",")
-        .append(file_name)
-        .append("] ")
-        .append(colors.DEFAULT);
+            .append("[")
+            .append(parsed_line_number)
+            .append(",")
+            .append(file_name)
+            .append("] ")
+            .append(colors.DEFAULT);
 }
 
-void Differentiator::write_data(std::string line, std::list<std::string> *file_data, std::string &file_name, int line_number)
+void Differentiator::write_data(std::string line, std::list<std::string> *file_data, std::string &file_name,
+                                int line_number)
 {
     std::list<std::string>::iterator result;
     std::string parsed_line_number = get_parsed_line_number(line_number);
@@ -175,36 +166,38 @@ void Differentiator::write_data(std::string line, std::list<std::string> *file_d
     {
         if (print_lines)
             line = prefix.append(line);
-
-        result = differences.insert(differences.end(), line);
+        differences.insert(differences.end(), line);
         if (debug_mode)
             log.info("Difference spotted", line);
-    }
-    else
+    } else
     {
-        if (print_lines)
-            line = prefix.append(line);
+        if (line.at(0) != 13) // check if the line is not just a '\n' character
+        {
+            if (print_lines)
+                line = prefix.append(line);
 
-        result = similarities.insert(similarities.end(), line);
-        if (debug_mode)
-            log.info("Similarity spotted", line);
+            similarities.insert(similarities.end(), line);
+            if (debug_mode)
+                log.info("Similarity spotted", line);
+        }
     }
 }
 
-void Differentiator::compare(std::list<std::string> *first_file_data, std::list<std::string> *second_file_data, std::string file_name)
+void Differentiator::compare(std::list<std::string> *first_data, std::list<std::string> *second_data,
+                             std::string file_name)
 {
     try
     {
         std::list<std::string>::iterator i;
-        auto begin = first_file_data->begin();
-        auto end = first_file_data->end();
+        auto begin = first_data->begin();
+        auto end = first_data->end();
         int line_number = 1;
 
         if (debug_mode)
             log.info("Writing Data started");
         for (i = begin; i != end; i++)
         {
-            write_data(*i, second_file_data, file_name, line_number);
+            write_data(*i, second_data, file_name, line_number);
             line_number++;
         }
         if (debug_mode)
@@ -221,7 +214,7 @@ void Differentiator::basic_comparing()
     printf("%s<=> BASIC COMPARING <=>%s\n", colors.BLUE, colors.DEFAULT);
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
     compare(first_file_data, second_file_data, file_handler.get_first_file_name());
-    print_result(DIFFERENCES, file_handler.get_first_file_name());
+    print_differences(file_handler.get_first_file_name());
 }
 
 void Differentiator::side_by_side_comparing()
@@ -229,13 +222,13 @@ void Differentiator::side_by_side_comparing()
     printf("%s\\\\\\\\\\\\ SIDE BY SIDE COMPARING //////%s\n", colors.PURPLE, colors.DEFAULT);
     print_names_of_comparing_files(file_handler.get_first_file_name(), file_handler.get_second_file_name());
     compare(first_file_data, second_file_data, file_handler.get_first_file_name());
-    print_result(DIFFERENCES, file_handler.get_first_file_name());
+    print_differences(file_handler.get_first_file_name());
     cleanup();
 
     printf("\n%s%s%s\n\n", colors.PURPLE, line_separator.c_str(), colors.DEFAULT);
     print_names_of_comparing_files(file_handler.get_second_file_name(), file_handler.get_first_file_name());
     compare(second_file_data, first_file_data, file_handler.get_second_file_name());
-    print_result(DIFFERENCES, file_handler.get_second_file_name());
+    print_differences(file_handler.get_second_file_name());
 }
 
 void Differentiator::smart_comparing()
@@ -283,9 +276,9 @@ void Differentiator::set_debug_mode(bool mode)
     file_handler.set_debug_mode(mode);
 }
 
-void Differentiator::set_print_lines(bool print_lines)
+void Differentiator::set_print_lines(bool print_lines_new_state)
 {
-    this->print_lines = print_lines;
-    if (debug_mode && print_lines)
+    this->print_lines = print_lines_new_state;
+    if (debug_mode && print_lines_new_state)
         log.info("Showing lines number and file name");
 }

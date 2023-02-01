@@ -4,20 +4,7 @@
 
 namespace fs = std::filesystem;
 
-FileHandler::FileHandler() {}
-
-FileHandler::FileHandler(std::string &first_file_name, std::string &second_file_name)
-{
-    if (debug_mode)
-    {
-        log.info("Opening files");
-    }
-    open_files(first_file_name, second_file_name);
-    if (debug_mode)
-    {
-        log.info("Files are opened successfully");
-    }
-}
+FileHandler::FileHandler() = default;
 
 FileHandler::~FileHandler()
 {
@@ -41,7 +28,7 @@ void FileHandler::close_files()
     }
 }
 
-std::string FileHandler::get_file_type(std::string &file_name)
+std::string FileHandler::get_file_type(std::string &file_name) const
 {
     fs::file_status s = fs::status(file_name);
     if (fs::is_regular_file(s))
@@ -71,9 +58,9 @@ bool FileHandler::check_file_type(std::string &file_type, std::string &file_name
         std::string error_msg = "Invalid file type of file ";
         if (debug_mode)
             log.error(error_msg
-                                 .append(file_name)
-                                 .append(", actual type is: ")
-                                 .append(file_type));
+                              .append(file_name)
+                              .append(", actual type is: ")
+                              .append(file_type));
         return false;
     }
     return true;
@@ -83,7 +70,8 @@ bool FileHandler::check_files_type()
 {
     std::string first_file_type = get_file_type(first_file_name);
     std::string second_file_type = get_file_type(second_file_name);
-    bool result = check_file_type(first_file_type, first_file_name) && check_file_type(second_file_type, second_file_name);
+    bool result =
+            check_file_type(first_file_type, first_file_name) && check_file_type(second_file_type, second_file_name);
     return result;
 }
 
@@ -134,13 +122,13 @@ void FileHandler::set_files_to_start()
         log.info("Files were set on the start position");
 }
 
-void FileHandler::open_files(std::string &first_file_name, std::string &second_file_name)
+void FileHandler::open_files(std::string &first_file_to_open, std::string &second_file_to_open)
 {
-    this->first_file_name = first_file_name;
-    this->second_file_name = second_file_name;
+    this->first_file_name = first_file_to_open;
+    this->second_file_name = second_file_to_open;
 
-    this->first_file.open(first_file_name);
-    this->second_file.open(second_file_name);
+    this->first_file.open(first_file_to_open);
+    this->second_file.open(second_file_to_open);
 
     if (debug_mode)
         log.info("File verification started");
@@ -160,22 +148,10 @@ bool FileHandler::check_file_state(std::ifstream *file)
     if (file->eof())
         return false;
     if (file->bad())
-        throw BadbitException();
+        throw BadBitException();
     if (file->fail())
-        throw FailbitException();
+        throw FailBitException();
     return true;
-}
-
-std::string FileHandler::get_parsed_line_number(int line_number)
-{
-    std::string parser_line_number = std::to_string(line_number);
-    if (line_number < 10)
-        return std::string("00").append(parser_line_number);
-
-    if (line_number >= 10 && line_number < 100)
-        return std::string("0").append(parser_line_number);
-    else
-        return parser_line_number;
 }
 
 void FileHandler::read_file(std::ifstream *file, std::list<std::string> *file_data)
@@ -184,7 +160,7 @@ void FileHandler::read_file(std::ifstream *file, std::list<std::string> *file_da
     while (check_file_state(file))
     {
         std::getline(*file, line);
-        if (line == " " || line == "\n" || line == "")
+        if (line == " " || line == "\n" || line.empty())
             continue;
         file_data->push_back(line);
     }
@@ -207,7 +183,7 @@ void FileHandler::read_files()
 
 std::list<std::string> *FileHandler::get_first_file_data()
 {
-    if (first_file_data_list.size() == 0)
+    if (first_file_data_list.empty())
     {
         if (debug_mode)
             log.error("No input data from file", first_file_name);
@@ -219,7 +195,7 @@ std::list<std::string> *FileHandler::get_first_file_data()
 
 std::list<std::string> *FileHandler::get_second_file_data()
 {
-    if (second_file_data_list.size() == 0)
+    if (second_file_data_list.empty())
     {
         if (debug_mode)
             log.error("No input data from file", second_file_name);
@@ -227,16 +203,6 @@ std::list<std::string> *FileHandler::get_second_file_data()
         throw std::fstream::failure("File is empty");
     }
     return &second_file_data_list;
-}
-
-std::ifstream *FileHandler::get_first_file()
-{
-    return &first_file;
-}
-
-std::ifstream *FileHandler::get_second_file()
-{
-    return &second_file;
 }
 
 std::string FileHandler::get_first_file_name()
